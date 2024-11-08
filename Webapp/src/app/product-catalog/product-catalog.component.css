@@ -1,0 +1,137 @@
+/* .pro-stock-ribbon {
+    width: 100px;
+    padding: 2px 14px;    
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    background-color: #78D533;
+    box-shadow: 0 5px 10px rgba(0,0,0,.1);    
+    font-size: 12px;
+    color: #fff;
+    transform: rotate(45deg) translateX(29px) translateY(-10px);
+}
+
+.pro-stock-ribbon::after,
+.pro-stock-ribbon::before {
+    position: absolute;
+    z-index: -1;
+    top: -10px;    
+    content: '';
+    display: block;
+    border: 5px solid #2980b9;
+    
+}
+
+  .pro-stock-ribbon::before,
+  .pro-stock-ribbon::after {
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: #4DB600;
+    border-left-color: #00000000;
+  }
+  .pro-stock-ribbon::before {
+    top: 0px;
+    left: 0px;
+    transform: rotate(45deg) translate(11px, 8.5px);
+    border-width: 0px 0px 8px 8px;    
+    
+  }
+  .pro-stock-ribbon::after {
+    bottom: 0;
+    right: 0;
+    transform: rotate(45deg) translate(9px, 0px);
+    border-width: 0px 0px 7.5px 7.5px;        
+  }
+
+.pro-stock-ribbon.oFS::before,
+.pro-stock-ribbon.oFS::after {
+    border-bottom-color: #E64449;
+} */
+
+/* .pro-stock-ribbon {
+    --f: .5em; 
+    --r: .8em;
+    padding: 4px 14px;    
+    position: absolute;
+    inset-block-start: 10px;
+    inset-inline-end: 0;
+    background-color: #78D533;
+    box-shadow: 0 5px 10px rgba(0,0,0,.1);    
+    font-size: 12px;
+    color: #fff;
+    clip-path: 
+      polygon(0 0,100% 0,100% calc(100% - var(--f)),calc(100% - var(--f)) 100%,
+        calc(100% - var(--f)) calc(100% - var(--f)),0 calc(100% - var(--f)),
+        var(--r) calc(50% - var(--f)/2));
+} */
+.pL-h {
+  padding: 4px 0;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background-color: var(--header-bg);
+  }
+  
+  .pro-stock-ribbon {
+      --f: 6px;
+      --r: 10px;
+      padding: 4px 10px;
+      border-bottom: var(--f) solid #0005;
+      border-inline-start: var(--r) solid #0000;
+      position: absolute;
+      top: 12px;
+      inset-inline-end: calc(-1* var(--f));
+      font-size: 12px;
+      font-weight: 600; 
+      color: #fff;       
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--f)), calc(100% - var(--f)) 100%, calc(100% - var(--f)) calc(100% - var(--f)), 0 calc(100% - var(--f)), var(--r) calc(50% - var(--f) / 2));    
+  }
+  
+  [dir="rtl"] :host .pro-stock-ribbon {
+      clip-path: polygon(0 0,0 calc(100% - var(--f)),var(--f) 100%,
+          var(--f) calc(100% - var(--f)),100% calc(100% - var(--f)),
+          calc(100% - var(--r)) calc(50% - var(--f)/2),100% 0);
+  }
+  
+  
+  
+  
+  
+  
+  /* HTML: <div class="ribbon">Your text content</div> */
+  .ribbon {
+      font-size: 28px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .ribbon {
+      --f: .5em; /* control the folded part*/
+      --r: .8em; /* control the ribbon shape */
+      
+      position: absolute;
+      top: 20px;
+      left: calc(-1*var(--f));
+      padding-inline: .25em;
+      line-height: 1.8;
+      background: #987F69;
+      border-bottom: var(--f) solid #0005;
+      border-right: var(--r) solid #0000;
+      clip-path: 
+        polygon(0 0,0 calc(100% - var(--f)),var(--f) 100%,
+          var(--f) calc(100% - var(--f)),100% calc(100% - var(--f)),
+          calc(100% - var(--r)) calc(50% - var(--f)/2),100% 0);
+    }
+
+    :host ::ng-deep .p-dataview .p-dataview-content {
+      background-color: transparent;
+      padding: 0;
+    }
+
+    :host ::ng-deep .p-inputgroup .p-inputtext {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+
+    :host ::ng-deep .p-autocomplete .p-inputtext {
+      padding-inline-start: 40px;
+    }

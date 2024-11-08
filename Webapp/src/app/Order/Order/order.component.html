@@ -1,0 +1,85 @@
+<!-- <div class="mb-3"> -->
+<app-sticky-page-header [title]="'Order No - '+ OrderNumber" defaultHref="/OrderList" [isCardTitle]="false" (isPinned)="headerPinned = $event" class="mb-3">
+    <ng-template mTemplate tempName="buttons">
+        <!-- <p-button pRipple icon="pi pi-times" label="Cancel" severity="secondary" (click)="Cancel()" [size]="headerPinned ? 'small' : undefined" />
+        <p-button pRipple icon="pi pi-check-circle" *ngIf="OrderId == 0" class="ms-3" label="Save" severity="success" (click)="SaveOrUpdateBranch()" [size]="headerPinned ? 'small' : undefined" />
+        <p-button pRipple icon="pi pi-check-circle" *ngIf="OrderId != 0" class="ms-3" label="Update" severity="success" (click)="SaveOrUpdateBranch()" [size]="headerPinned ? 'small' : undefined" /> -->
+    </ng-template>
+</app-sticky-page-header>
+<!-- </div> -->
+
+<div class="col-12 text-end mb-3">
+    <p-button pRipple icon="pi pi-times" label="Cancel" severity="secondary" (click)="Cancel()" [size]="headerPinned ? 'small' : undefined" />
+</div>
+<p-card header="Order Info">    
+    <div class="row mt-2">
+        <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mt-3">
+            <p-floatLabel>
+                <input pInputText type="text" value="ORD-1001" class="w-100" style="background-color: lightgray;" [(ngModel)]="OrderNumber" readonly/>
+                <label class="mb-2">Order No<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+        </div>
+
+        <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mt-3">
+            <p-floatLabel>
+                <input pInputText type="text" value="30-Aug-2024" class="w-100" style="background-color: lightgray;" [(ngModel)]="OrderDataAndTime" readonly/>
+                <label class="mb-2">Order Date<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+        </div>
+
+        <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mt-3">
+            <p-floatLabel>
+                <input pInputText type="text" value="30-Aug-2024" class="w-100" style="background-color: lightgray;" [(ngModel)]="BusinessName" readonly/>
+                <label class="mb-2">Business<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+        </div>
+
+    </div>
+</p-card>
+
+<div class="mt-3">
+    <p-card header="Order Detail List">
+
+        <div class="mt-3">
+            <p-table #dt [value]="OrderData" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true"
+            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0" [tableStyle]="{ 'width': '100%' }" [scrollable]="true">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>
+                        Metal
+                    </th>
+                    <th>
+                        Purity
+                    </th>
+                    <th>
+                        Category
+                    </th>
+                    <th>
+                        Product
+                    </th>
+                    <th>
+                        Variant
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.metal_name}}</td>
+                    <td>{{item.purity_name}}</td>
+                    <td>{{item.category_name}}</td>
+                    <td>{{item.product_name}}</td>
+                    <td *ngIf="item.combination != null" >{{item.combination}}</td>
+                    <td *ngIf="item.combination == null" >N/A</td>
+                    <td>{{item.quantity}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        </div>
+    </p-card>
+</div>

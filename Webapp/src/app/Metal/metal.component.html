@@ -1,0 +1,89 @@
+<app-sticky-page-header class="mb-4" [title]="!MetalData.id ?  '' : 'Edit - '+ MetalData.name" defaultHref="/Metal"
+    [isCardTitle]="false"></app-sticky-page-header>
+<p-card header="Metal">
+    <div class="row" [formGroup]="MetalForm">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <input type="text" pInputText class="w-100" formControlName="name" [(ngModel)]="MetalData.name" placeholder="Enter Name"/>
+                <label>Name<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="name" [MessageArray]="MetalValidationMessage"
+                [FormGroupName]="MetalForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <input type="text" pInputText class="w-100" formControlName="code" [(ngModel)]="MetalData.code" placeholder="Enter Code"/>
+                <label>Code<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="code" [MessageArray]="MetalValidationMessage" [FormGroupName]="MetalForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3" *ngIf="MetalData.id">
+            <p-floatLabel>
+                <p-inputNumber styleClass="w-100" class="w-100" formControlName="display_order" [(ngModel)]="MetalData.display_order" placeholder="Enter display order" [min]="1" [max]="MetalList.length"/>
+                <label>Display Order<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="display_order" [MessageArray]="MetalValidationMessage" [FormGroupName]="MetalForm"></app-validation>
+        </div>
+
+        <div class="col-12 text-end mb-3">
+            <p-button icon="pi pi-times" [label]="!MetalId ? 'Clear' : 'Cancel'" class="me-3" [raised]="true"
+                severity="danger" (click)="Cancel()" />
+            <button pButton pRipple icon="pi pi-check-circle" class="me-3" [label]="!MetalData.id ? 'Save' : 'Update'"
+                class="p-button-success" (click)="SaveOrUpdate()"></button>
+        </div>
+    </div>
+</p-card>
+<div class="mt-3" *ngIf="!MetalData.id">
+    <p-card header="Metal List">
+        <p-table #dt [value]="MetalList" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true"
+            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+            [globalFilterFields]="['name','code']" [tableStyle]="{ 'width': '100%' }" [scrollable]="true">
+            <ng-template pTemplate="caption">
+                <div class="d-flex justify-content-between">
+                    <span></span>
+                    <p-iconField iconPosition="left">
+                        <p-inputIcon>
+                            <i class="pi pi-search"></i>
+                        </p-inputIcon>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            placeholder="Search" />
+                    </p-iconField>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="name">
+                        Name <p-sortIcon field="name" />
+                    </th>
+                    <th pSortableColumn="code" class="text-center">
+                        code <p-sortIcon field="code" />
+                    </th>
+                    <th pSortableColumn="display_order" class="text-center">
+                        Display Order <p-sortIcon field="display_order" />
+                    </th>
+                    <th class="text-end">
+                        Action
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td class="text-center">{{ item.code }}</td>
+                    <td class="text-center">{{ item.display_order }}</td>
+                    <td class="text-end">
+                        <p-button icon="pi pi-pencil" [rounded]="true" severity="primary"
+                            (click)="EditMetal(item.id)" *ngIf="item.is_used == false"/>&nbsp;
+                        <p-button icon="pi pi-trash" [rounded]="true" severity="danger"
+                            (click)="Delete(item.id,item.name)" *ngIf="item.is_used == false"/>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
+<p-confirmDialog header="Confirmation" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

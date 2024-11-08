@@ -1,0 +1,104 @@
+<p-card class="mt-5">
+    <app-sticky-page-header title="Sales Issue List" [isCardTitle]="true" [showBackButton]="false" (isPinned)="headerPinned = $event" class="mb-3">
+
+    </app-sticky-page-header>
+
+    <div class="row mt-2">
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+            <p-floatLabel>
+                <label class="mb-2" >Date Range</label>                
+                <input pInputText type="text" class="w-100" style="width: -webkit-fill-available;"
+                type="text" [maxDate]="maxDate" ngxDaterangepickerMd
+                placeholder="Select Date Range" class="form-control" drops="down"
+                [showRangeLabelOnInput]="true" [showCustomRangeLabel]="true"
+                [alwaysShowCalendars]="false" [ranges]="ranges" [locale]="datePickerLocalOptions" (change)="GetDateRange($event)"
+                startKey="from" endKey="to" opens="right" [showCustomRangeLabel]="true" (focus)="setRangesToCalender()"/>
+            </p-floatLabel>
+        </div>
+        
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="MetalList"
+                    [(ngModel)]="SearchData.metal_id" (onChange)="GetPurityList($event.value)" optionLabel="name" optionValue="id"
+                    placeholder="Select Metal" />
+                <label class="mb-2">Metal</label>
+            </p-floatLabel>
+        </div>
+
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="PurityList"
+                    [(ngModel)]="SearchData.purity_id" optionLabel="name" optionValue="id"
+                    placeholder="Select Purity" />
+                <label class="mb-2">Purity</label>
+            </p-floatLabel>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-12 text-end">
+            <p-button icon="pi pi-search" label="Search" [raised]="true" severity="secondary" (click)="GetStockEntryList()" />
+        </div>
+    </div>
+
+    <p-table [responsive]="true" #dt [globalFilterFields]="['stock_number','metal_name','purity_name','business_from','business_to','fine_weight']" [value]="PurchaseReceiptList" [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+        [scrollable]="true">
+
+        <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between">
+                <p-button icon="pi pi-plus" label="Add New" [raised]="true" severity="primary" (click)="AddOrEditPurchase(0)" />
+                <p-iconField iconPosition="left">
+                    <p-inputIcon>
+                        <i class="pi pi-search"></i>
+                    </p-inputIcon>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
+                </p-iconField>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Metal
+                </th>
+                <th>
+                    Purity
+                </th>
+                <th>
+                    Business From
+                </th>
+                <th>
+                    Business To
+                </th>
+                <th>
+                    Fine Wt.gms
+                </th>
+                <th class="text-end">
+                    Action
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.stock_number}}</td>
+                <td>{{item.metal_name}}</td>
+                <td>{{item.purity_name}}</td>
+                <td>{{item.business_from}}</td>
+                <td>{{item.business_to}}</td>
+                <td *ngIf="item.fine_weight != null">{{item.fine_weight}}</td>
+                <td *ngIf="item.fine_weight == null">N/A</td>
+                <td class="text-end">
+                    <p-button icon="pi pi-pencil" [rounded]="true" severity="primary" (click)="AddOrEditPurchase(item.id)" />&nbsp;
+                    <!-- <p-button icon="pi pi-trash" [rounded]="true" severity="danger" (click)="Delete(item.id,item.name)" /> -->
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</p-card>
+<p-confirmDialog header="Confirmation" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

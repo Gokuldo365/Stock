@@ -1,0 +1,26 @@
+<p-fileUpload name="myfile[]" #fileUpload [multiple]="multiple" [accept]="accept" [maxFileSize]="maxFileSize" styleClass="custom-file-uploader" [customUpload]="true" [auto]="true" (onRemove)="fileRemove($event)" (onSelect)="onSelectedFiles($event)">
+    <ng-template pTemplate="header" let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="d-flex gap-2 d-none"></div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="content" let-files let-uploadedFiles="uploadedFiles" let-chooseCallback="chooseCallback" let-removeFileCallback="removeFileCallback" let-removeUploadedFileCallback="removeUploadedFileCallback">
+        <div class="d-flex align-items-center justify-content-center flex-column">
+            <p-button icon="pi pi-cloud-upload" severity="primary" [rounded]="true" [raised]="true" [text]="true" size="large" (onClick)="choose($event, chooseCallback)"/>                       
+            <h3 class="mb-0" *ngIf="files?.length == 0">Drop files here or click to upload.</h3>
+            <p class="mt-1 mb-0" *ngIf="files?.length == 0">Drop files here or click browse thorough your machine</p>
+        </div>
+        <div *ngIf="files?.length > 0">            
+            <div *ngFor="let file of files;index as i;last as isLast" class="d-flex flex-row align-items-center gap-3" [ngClass]="{'mb-3': !isLast}">
+                <div>
+                    <img role="presentation" [alt]="file.name" [src]="images.value[i]" width="50" height="50" class="rounded object-fit-contain"/>                    
+                </div>
+                <span class="font-semibold flex-grow-1 text-truncate">{{ file.name }}</span>
+                <div class="flex-shrink-0">{{formatSize(file.size) }}</div>
+                <p-badge value="Pending" severity="warning" />
+                <p-button icon="pi pi-times" (onClick)="onRemoveTemplateFile($event, file, removeFileCallback, i)" [outlined]="true" [rounded]="true" severity="danger" />
+            </div>
+            </div>              
+    </ng-template>
+    <ng-template pTemplate="file"> </ng-template>   
+</p-fileUpload>

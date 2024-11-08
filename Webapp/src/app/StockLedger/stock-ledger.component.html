@@ -1,0 +1,190 @@
+<app-sticky-page-header class="mb-4" [title]="'Item Ledger'" [isCardTitle]="false"></app-sticky-page-header>
+
+<p-card header="Filter">
+    <div class="row mt-3" [formGroup]="FilterForm">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="metal_id" [options]="MetalDropdown" (onChange)="GetPurityList($event.value)" [(ngModel)]="SearchData.metal_id" optionLabel="name" optionValue="id" placeholder="Select Metal" (onChange)="GetStockLedgerList('ML')" [showClear]="true"
+                />
+                <label>Metal<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="metal_id" [MessageArray]="FilterValidationMessage" [FormGroupName]="FilterForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName='purity_id' [options]="PurityDropdown" [(ngModel)]="SearchData.purity_id" optionLabel="name" optionValue="id" placeholder="Select Purity" (onChange)="GetStockLedgerList('PT')"/>
+                <label>Purity<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="purity_id" [MessageArray]="FilterValidationMessage" [FormGroupName]="FilterForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="category_id" [options]="CategoryDropdown" (onChange)="GetProductList($event.value)" [(ngModel)]="SearchData.category_id" optionLabel="name" optionValue="id" placeholder="Select Category" (onChange)="GetStockLedgerList('CT')"
+                />
+                <label>Category<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="category_id" [MessageArray]="FilterValidationMessage" [FormGroupName]="FilterForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="product_id" [options]="ProductDropdown" [(ngModel)]="SearchData.product_id" (onChange)="GetProductCombinationList($event.value)" optionLabel="name" optionValue="id" placeholder="Select Product" (onChange)="GetStockLedgerList('PR')"
+                />
+                <label>Product<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="product_id" [MessageArray]="FilterValidationMessage" [FormGroupName]="FilterForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3" *ngIf="ProductCombinationDropdown?.length > 0">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" formControlName="combination_id" [options]="ProductCombinationDropdown" [(ngModel)]="SearchData.product_variant_id" optionLabel="combination" optionValue="id" placeholder="Select Variant" (onChange)="GetStockLedgerList('PV')"  [showClear]="true" />
+                <label>Variant<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="combination_id" [MessageArray]="FilterValidationMessage" [FormGroupName]="FilterForm"></app-validation>
+        </div>
+
+    </div>
+    <!-- <div class="col-12 text-end mt-2">
+        <p-button label="Filter" icon="pi pi-filter" (click)="GetStockLedgerList()" />
+    </div> -->
+</p-card>
+
+<div class="mt-3" *ngIf="StockLedgerList?.length > 0">
+    <p-card>
+        <!-- <div class="col-12 text-end mt-2">
+                <p-button label="Download" class="mx-3" icon="pi pi-download" (click)="DownloadExcel()" />
+        </div> -->
+        <p-table #dt [value]="StockLedgerList" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="false" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+            [globalFilterFields]="['stock_entry_date_time','stock_number','narration','unit_name','qty_in','qty_out','qty_balance','stock_in','stock_out','stock_balance','fine_weight_in','fine_weight_out','fine_weight_balance']" [tableStyle]="{ 'width': '100%', 'height':'auto'}" [scrollable]="true" scrollHeight="450px" [style]="{ 'width': '100%', 'margin': '0 auto' }">
+            <ng-template pTemplate="caption">
+                <div class="d-flex justify-content-between">
+                    <!-- <span></span> -->
+                    <div>
+                        <p-button label="Download" icon="pi pi-download" (click)="DownloadExcel()" />
+                    </div>
+                    <div >
+                        <p-iconField iconPosition="left">
+                            <p-inputIcon>
+                                <i class="pi pi-search"></i>
+                            </p-inputIcon>
+                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
+                        </p-iconField>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width:270px" *ngIf="scrWidth < 992">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:350px">
+                    <col style="width:350px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:270px;max-width:270px;" *ngIf="scrWidth > 992">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="text-align: center;">
+                        Date
+                    </th>
+                    <th style="text-align: center;">
+                        Number
+                    </th>
+                    <th style="text-align: start;">
+                        Narration
+                    </th>
+                    <th style="text-align: center;">
+                        UOM
+                    </th>
+                    <th style="text-align: end;">
+                        Qty In
+                    </th>
+                    <th style="text-align: end;">
+                        Qty Out
+                    </th>
+                    <th style="text-align: end;">
+                        Qty Balance
+                    </th>
+                    <th style="text-align: end;">
+                        Stock In
+                    </th>
+                    <th style="text-align: end;">
+                        Stock Out
+                    </th>
+                    <th style="text-align: end;">
+                        Stock Balance
+                    </th>
+                    <th style="text-align: end;">
+                        Fine Weight In
+                    </th>
+                    <th style="text-align: end;">
+                        Fine Weight Out
+                    </th>
+                    <th style="text-align: end;">
+                        Fine Weight Balance
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                        <td style="text-align: center;min-width:125px">{{item.stock_entry_date_time | date:"dd-MMM-yyyy"}}</td>
+                        <td style="text-align: center;">{{item.stock_number}}</td>
+                        <td style="text-align: start;">{{item.narration}}</td>
+                        <td style="text-align: center">{{item.unit_name}}</td>
+                        <td style="text-align: end;" *ngIf="item.qty_in != 0">{{item.qty_in}}</td>
+                        <td style="text-align: end;" *ngIf="item.qty_in == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.qty_out != 0">{{item.qty_out}}</td>
+                        <td style="text-align: end;" *ngIf="item.qty_out == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.qty_balance != 0"> {{item.qty_balance}}</td>
+                        <td style="text-align: end;" *ngIf="item.qty_balance == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.stock_in != 0">{{item.stock_in | number: '1.3-3'}}</td>
+                        <td style="text-align: end;" *ngIf="item.stock_in == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.stock_out != 0">{{item.stock_out | number: '1.3-3'}}</td>
+                        <td style="text-align: end;" *ngIf="item.stock_out == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.stock_balance != 0">{{item.stock_balance | number: '1.3-3'}}</td>
+                        <td style="text-align: end;" *ngIf="item.stock_balance == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.fine_weight_in != 0">{{item.fine_weight_in | number: '1.3-3'}}</td>
+                        <td style="text-align: end;" *ngIf="item.fine_weight_in == 0"></td>
+
+                        <td style="text-align: end;" *ngIf="item.fine_weight_out != 0">{{item.fine_weight_out | number: '1.3-3'}}</td>
+                        <td style="text-align: end;" *ngIf="item.fine_weight_out == 0"></td>
+
+                        <td style="text-align: end;"*ngIf="item.fine_weight_balance != 0">{{item.fine_weight_balance | number: '1.3-3'}}</td>
+                        <td style="text-align: end;"*ngIf="item.fine_weight_balance == 0"></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer" style="position: sticky;">
+
+                <tr>
+                    <td colspan="4" class="fw-bold fs-4" style="text-align: center;">TOTAL</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateQualityIn()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateQualityOut()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateQtyBalance()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateStockIn()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateStockOut()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateStockBalance()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateFineWtyIn()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateFineWtyOut()}}</td>
+                    <td class="fw-bold fs-5" style="text-align: end;">{{CalculateFineWtyBalance()}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>

@@ -1,0 +1,97 @@
+<p-card class="mt-5">
+    <app-sticky-page-header title="Product List" [isCardTitle]="true" [showBackButton]="false" (isPinned)="headerPinned = $event" class="mb-3">
+
+    </app-sticky-page-header>
+
+    <div [formGroup]="filterForm" class="row mt-4 mb-4">
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="metalList" formControlName="metal_id" optionLabel="name" optionValue="id" (onChange)="GetPurityListAndCategoryList($event.value)" [showClear]="true" />
+                <label>Metal</label>
+            </p-floatLabel>
+            <div *ngIf="filterFC.metal_id.invalid && (filterFC.metal_id.dirty || filterFC.metal_id.touched)" class="text-danger">
+                <small *ngIf="filterFC.metal_id.hasError('required')">Please select Metal type.</small>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="purityList" formControlName="purity_id" optionLabel="name" optionValue="id" [showClear]="true" (onChange)="filterProduct()"/>
+                <label>Purity</label>
+            </p-floatLabel>            
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="categoryList" formControlName="category_id" optionLabel="name" optionValue="id" [showClear]="true" (onChange)="filterProduct()"/>
+                <label>Category</label>
+            </p-floatLabel>            
+        </div>
+        <!-- <div class="col-12 text-end">
+            <p-button icon="pi pi-filter" label="Filter" [raised]="true" severity="primary" (click)="filterProduct()" />
+        </div> -->
+    </div>
+
+    <p-table [responsive]="true" #dt [globalFilterFields]="['category_name','product_name', 'product_code','metal_name','purity_name']" [value]="ProductList" [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+        [scrollable]="true">
+
+        <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between">
+                <p-button icon="pi pi-plus" label="Add New" [raised]="true" severity="primary" (click)="AddOrEditProduct(0,'false')" />
+                <p-iconField iconPosition="left">
+                    <p-inputIcon>
+                        <i class="pi pi-search"></i>
+                    </p-inputIcon>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
+                </p-iconField>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="category_name">
+                    Category
+                    <p-sortIcon field="category_name" />
+                </th>
+                <th pSortableColumn="metal_name">
+                    Metal
+                    <p-sortIcon field="metal_name" />
+                </th>
+                <th pSortableColumn="purity_name">
+                    Purity
+                    <p-sortIcon field="purity_name" />
+                </th>
+                <th pSortableColumn="product_name">
+                    Name
+                    <p-sortIcon field="product_name" />
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Type
+                </th>
+                <th class="text-end">
+                    Action
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.category_name}}</td>
+                <td>{{item.metal_name}}</td>
+                <td>{{item.purity_name}}</td>
+                <td>{{item.product_name}}</td>
+                <td>{{item.product_code}}</td>
+                <td *ngIf="item.product_type == 'IP'">Individual</td>
+                <td *ngIf="item.product_type == 'AP'">Attribute</td>
+                <td class="text-end">
+                    <p-button icon="pi pi-pencil" [rounded]="true" severity="primary"  (click)="AddOrEditProduct(item.product_id,item.is_used)" />&nbsp;
+                    <p-button icon="pi pi-trash" [rounded]="true" severity="danger" (click)="Delete(item.product_id,item.product_name)" *ngIf="item.is_used == 'false'"/>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</p-card>
+<p-confirmDialog header="Confirmation" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

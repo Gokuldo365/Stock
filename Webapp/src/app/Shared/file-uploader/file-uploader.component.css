@@ -1,0 +1,39 @@
+:host ::ng-deep  .custom-file-uploader .p-fileupload-buttonbar {
+    border-style: dashed;
+    border-width: 2px 2px 0;
+    padding-block-end: 0;
+    border-color: var(--primary-light-op-16);
+    transition: border 225ms linear, background-color 225ms linear;
+}
+
+:host ::ng-deep  .custom-file-uploader .p-fileupload-content {
+    border-style: dashed;
+    border-width: 0 2px 2px;
+    border-color: var(--primary-light-op-16);
+    padding-block-start: 12px;
+    transition: border 225ms linear, background-color 225ms linear;
+}
+
+:host ::ng-deep  .custom-file-uploader .p-fileupload-content.p-fileupload-highlight,
+:host ::ng-deep  .custom-file-uploader .p-fileupload-buttonbar:has(+.p-fileupload-highlight) {
+    border-color: var(--primary-main);
+    background-color: var(--primary-light-op-16);   
+}
+
+:host ::ng-deep  .custom-file-uploader .p-fileupload-content.p-fileupload-highlight {    
+    border-width: 0 3px 3px;
+}
+
+:host ::ng-deep  .custom-file-uploader .p-fileupload-buttonbar:has(+.p-fileupload-highlight) {
+    border-width: 3px 3px 0;
+}
+
+/* :host ::ng-deep  .custom-file-uploader .p-fileupload-buttonbar, */
+:host ::ng-deep  .custom-file-uploader .p-progressbar {
+    display: none;
+}
+
+:host ::ng-deep .custom-file-uploader .p-fileupload-content,
+:host ::ng-deep  .custom-file-uploader .p-fileupload-buttonbar {
+    background-color: var(--primary-light-op-08);
+}

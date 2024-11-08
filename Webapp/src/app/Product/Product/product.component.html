@@ -1,0 +1,316 @@
+<app-sticky-page-header [title]="ProductId == 0 ? 'New Product' : 'Edit - '+ ProductData.name"
+    defaultHref="/ProductList" [isCardTitle]="false" (isPinned)="headerPinned = $event"
+    class="mb-3"></app-sticky-page-header>
+
+<div class="col-12 text-end mb-3">
+    <p-button pRipple icon="pi pi-times" label="Cancel" severity="secondary" (click)="Cancel()"
+        [size]="headerPinned ? 'small' : undefined" />&nbsp;
+    <button *ngIf="ProductId == 0" pButton pRipple icon="pi pi-check-circle" label="Save" class="p-button-success"
+        (click)="SaveOrUpdateProduct()"></button>
+    <button *ngIf="ProductId != 0 && !IsUsed" pButton pRipple icon="pi pi-check-circle" label="Update"
+        class="p-button-success" (click)="SaveOrUpdateProduct()"></button>
+</div>
+
+<p-card header="Product Info">
+    <div class="row mt-3" [formGroup]="ProductForm">
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <!-- <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="CategoryList" formControlName="category_id"
+                    [(ngModel)]="ProductData.category_id" optionLabel="dropdown_label" optionValue="id"
+                    placeholder="Select Category" />
+                <label class="mb-2">Category<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel> -->
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="metal_id"
+                    [options]="MetalDropdown" (onChange)="GetPurityList($event.value)"
+                    [(ngModel)]="ProductData.metal_id" optionLabel="name" optionValue="id" placeholder="Select Metal"
+                    [showClear]="true" />
+                <label>Metal<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="metal_id" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <!-- <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="MetalDropdown" formControlName="metal_id"
+                    [(ngModel)]="ProductData.metal_id" (onChange)="GetPurityList($event.value)" optionLabel="name" optionValue="id" placeholder="Select Metal" />
+                <label class="mb-2">Metal<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel> -->
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName='purity_id'
+                    [options]="PurityDropdown" [(ngModel)]="ProductData.purity_id" optionLabel="name" optionValue="id"
+                    placeholder="Select Purity" [showClear]="true" />
+                <label>Purity<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="purity_id" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <!-- <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="PurityList" formControlName="purity_id"
+                    [(ngModel)]="ProductData.purity_id" optionLabel="name" optionValue="id"
+                    placeholder="Select Purity" />
+                <label class="mb-2">Purity<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel> -->
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="category_id"
+                    [options]="CategoryDropdown" [(ngModel)]="ProductData.category_id" optionLabel="name"
+                    optionValue="id" placeholder="Select Category" [showClear]="true" />
+                <label>Category<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="category_id" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <!-- <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="ProductTypeList" formControlName="product_type"
+                    [(ngModel)]="ProductData.product_type" optionLabel="name" optionValue="id"
+                    placeholder="Select Product Type" />
+                <label class="mb-2">Product Type<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="product_type" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div> -->
+
+        <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 mb-3">
+            <p-floatLabel>
+                <input pInputText type="text" class="w-100" placeholder="Enter Name" formControlName="name"
+                    [(ngModel)]="ProductData.name" />
+                <label class="mb-2">Name<span style="color: #FC6161; "> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="name" [MessageArray]="ProductValidationMessages "
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-3">
+            <p-floatLabel>
+                <input pInputText type="text" class="w-100" placeholder="Enter Code" formControlName="product_code"
+                    [(ngModel)]="ProductData.product_code" />
+                <label class="mb-2">Code<span style="color: #FC6161; "> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="product_code" [MessageArray]="ProductValidationMessages "
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="UnitOfMeasurementDropdown"
+                    formControlName="unit_of_measurement_id" [(ngModel)]="ProductData.unit_of_measurement_id"
+                    optionLabel="name" optionValue="id" placeholder="Select UOM" />
+                <label class="mb-2">Unit Of Measurement<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="unit_of_measurement_id" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+
+
+        <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" [options]="ProductTypeList"
+                    formControlName="product_type" [(ngModel)]="ProductData.product_type" optionLabel="name"
+                    optionValue="id" placeholder="Select Product Type" />
+                <label class="mb-2">Product Type<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="product_type" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <!-- <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-multiSelect styleClass="w-100" [options]="MixedMaterialDropdown" formControlName="mixed_material_ids"
+                    [(ngModel)]="ProductData.mixed_material_ids" optionValue="id" optionLabel="name"></p-multiSelect>
+                <label class="mb-2">Mixed Material</label>
+            </p-floatLabel>
+            <app-validation propertyName="mixed_material_ids" [MessageArray]="ProductValidationMessages"
+                [FormGroupName]="ProductForm"></app-validation>
+        </div> -->
+
+        <div class="col-xxl-4 col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-3" *ngIf="ProductData.id">
+            <p-floatLabel>
+                <input pInputText type="text" numeric class="w-100" placeholder="Enter Display Order"
+                    formControlName="display_order" [(ngModel)]="ProductData.display_order" />
+                <label class="mb-2">Display Order<span style="color: #FC6161; "> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="display_order" [MessageArray]="ProductValidationMessages "
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+            <p-floatLabel>
+                <textarea rows="3" pInputText type="text" class="w-100" placeholder="Enter Description"
+                    formControlName="description" [(ngModel)]="ProductData.description"></textarea>
+                <label class="mb-2">Description<span style="color: #FC6161; "> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="description" [MessageArray]="ProductValidationMessages "
+                [FormGroupName]="ProductForm"></app-validation>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <h3>Mixed Material</h3>
+        <p-table [(selection)]="SelectedMixedMaterial" [value]="MixedMaterialDropdown" [globalFilterFields]="['name']"
+            scrollHeight="350px">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th><span style="font-weight: 600;">All Materials</span></th>
+                    <th class="text-center" *ngIf="ProductId != 0"><span style="font-weight: 600;">Display Order</span>
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td style="width: 3rem">
+                        <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                    </td>
+                    <td>{{item.name}}</td>
+                    <td class="text-center" *ngIf="ProductId != 0">
+                        <input pInputText type="text" numeric class="w-50" [(ngModel)]="item.display_order" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-card>
+
+
+<div class="col-12 row">
+    <div class="col-12 mt-3" *ngIf="ProductData.product_type == 'AP' && ProductData.id">
+        <p-card header="Variants">
+            <div class="mt-2">
+                <p-table [responsive]="true" #dt [globalFilterFields]="['category_name','name']"
+                    [value]="CombinationList" [paginator]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rows]="10"
+                    [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [scrollable]="true">
+
+                    <ng-template pTemplate="caption">
+                        <div class="d-flex justify-content-end" *ngIf="CombinationList.length == 0">
+                            <p-button icon="pi pi-plus" label="Add New" class="justify-content-end" [raised]="true"
+                                severity="primary" (click)="AddOrEditAttribute(0)" />
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="name">
+                                Variant
+                                <p-sortIcon field="name" />
+                            </th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{item.combination}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </p-card>
+    </div>
+
+
+
+    <p-card header="Images" *ngIf="ProductId != 0">
+        <div class="row">
+            <div [class]="ImageUrl?.length > 0 ? 'col-6' : 'col-12'">
+                <div class="" [formGroup]="imageForm">
+                    <div class="mb-3">
+                        <app-file-uploader formControlName="image" [multiple]="true" accept=".png, .jpg, .jpeg"
+                            [maxFileSize]="1000000"></app-file-uploader>
+                        <div *ngIf="imageFC.image.invalid && (imageFC.image.dirty || imageFC.image.touched)"
+                            class="text-danger mt-1">
+                            <small *ngIf="imageFC.image.errors?.required">Please select image</small>
+                        </div>
+                    </div>
+                    <!-- <div class="text-end">
+                        <p-button label="Save" icon="pi pi-save" (click)="saveOrUpdateImages()"></p-button>
+                    </div> -->
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <p-orderList *ngIf="ImageUrl?.length > 0" [value]="ImageUrl" header="List of images" [dragdrop]="true">
+                    <ng-template let-images pTemplate="item" let-index="index">
+                        <div class="d-flex flex-row align-items-center justify-content-between">
+                            <img [src]="images" height="100" />
+                            <span>{{index+1}}</span>
+                        </div>
+                    </ng-template>
+                </p-orderList>
+
+            </div>
+            <div class="text-end">
+
+                <button pButton pRipple icon="pi pi-check-circle" label="Upload Images" class="p-button-success"
+                    (click)="saveOrUpdateImages()"></button>
+            </div>
+        </div>
+    </p-card>
+</div>
+
+<p-dialog [modal]="true" [(visible)]="ProductAttributeDialouge" [style]="{width: '60vw', height : '100vw'}"
+    *ngIf="ProductAttributeDialouge">
+    <p-header *ngIf="ProductAttributeId == 0">
+        New Attribute
+    </p-header>
+    <p-header *ngIf="ProductAttributeId > 0">
+        Edit Attribute
+    </p-header>
+
+    <div class="row mt-3">
+
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-multiSelect styleClass="w-100" [options]="VariantList"
+                    (onChange)="GetVariantDetailList($event.value)" [(ngModel)]="selectedAttributes" optionLabel="name"
+                    optionValue="id" placeholder="Select Variant" />
+                <label class="mb-2">Variant<span style="color: red;">*</span></label>
+            </p-floatLabel>
+        </div>
+
+        <div class="mt-2">
+            <p-table [responsive]="true" #dt [value]="VariantDetailList" styleClass="p-datatable-striped"
+                (onRowSelect)="SelectedCombinationChangeEvent($event.data,true)"
+                (onRowUnselect)="SelectedCombinationChangeEvent($event.data,false)"
+                [(selection)]="SelectedCombinations">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th>SNO</th>
+                        <th>
+                            Combination(s)
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-index="rowIndex">
+                    <tr>
+                        <td>{{index + 1}}</td>
+                        <td>
+                            {{rowData.value}}
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <p-footer>
+        <div class="col-12 text-end mb-3">
+            <p-button pRipple icon="pi pi-times" label="Cancel" severity="secondary" (click)="CancelAttribute()"
+                [size]="headerPinned ? 'small' : undefined" />&nbsp;
+            <button *ngIf="ProductAttributeId == 0" [disabled]="VariantDetailList.length == 0" pButton pRipple
+                icon="pi pi-check-circle" label="Save" class="p-button-success"
+                (click)="SaveOrUpdateAttribute()"></button>
+            <!-- <button *ngIf="ProductAttributeId != 0" pButton pRipple icon="pi pi-check-circle" label="Update"
+                class="p-button-success" (click)="SaveOrUpdateAttribute()"></button> -->
+        </div>
+    </p-footer>
+
+</p-dialog>

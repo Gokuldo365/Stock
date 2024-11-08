@@ -1,0 +1,167 @@
+<div class="pL-h pb-2 px-3 d-flex flex-row align-items-center justify-content-between gap-3">
+    <div class="d-flex flex-row align-items-center">
+        <p-button [text]="true" icon="pi pi-arrow-left" [rounded]="true" (click)="location.back()"></p-button>
+        <h3 class="my-0 ms-3 flex-grow-1">Product Catalog</h3>
+    </div>
+    <div class="position-relative flex-grow-1" style="max-width: 400px;min-width: 0;">
+        <i class="pi pi-search position-absolute z-1" style="top: 50%;transform: translateY(-50%);inset-inline-start: 12px;"></i>
+        <p-autoComplete [suggestions]="productSuggestions" [(ngModel)]="selectedSearchProduct" field="product_name" [delay]="700" (completeMethod)="searchProduct($event)" (onSelect)="searchProductSelect($event)" (onClear)="searchProductClear($event)" styleClass="w-100"
+            inputStyleClass="w-100" placeholder="Search product / code" [showClear]="true">
+            <ng-template let-product pTemplate="selectedItem">
+                <span class="flex-grow-1 ps-3 text-truncate">{{product.product_name}} - {{product.purity_name}}</span>
+            </ng-template>
+            <ng-template let-product pTemplate="item">
+                <div class="d-flex flex-row align-items-center">
+                    <img [src]="product.product_images && product.product_images.length > 0 ? product.product_images[0] : '../../assets/images/no_image.jpg'" width="25" height="25" class="rounded" />
+                    <span class="flex-grow-1 px-3 text-truncate">{{product.product_name}} - {{product.purity_name}} - {{product.product_code}}  <br> {{product.product_combination}}</span>
+                    <p-badge [value]="product.stock ? product.stock+' - In Stock' : 'Out of Stock'" [severity]="product.stock ? 'success' : 'danger'" />
+                </div>
+            </ng-template>
+        </p-autoComplete>
+        <!-- <input type="text" pInputText class="w-100" [(ngModel)]="ProductNameAndCode" placeholder="Search product / code"/> -->
+    </div>
+    <p-button pRipple icon="pi pi-eye" class="ms-3" label="View Cart" (click)="PlaceOrder()" severity="primary" />
+</div>
+<div class="container-fluid mb-3 py-3">
+    <div class="row">
+        <div class="col-lg-3 mb-3">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <div class="d-flex flex-row align-items-center justify-content-between pt-3 px-3">
+                        <h4 class="m-0">Filter</h4>
+                        <p-button *ngIf="formHasValue() || selectedAttribute.length || weight[0] > 0 || weight[1] < 1000" label="Clear" [text]="true" [raised]="true" severity="secondary" icon="pi pi-times" size="small" (click)="resetFilterForm(true)" />
+                    </div>
+                </ng-template>
+                <div [formGroup]="filterForm" class="row mt-3">
+                    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-12 mb-4">
+                        <p-floatLabel>
+                            <p-dropdown styleClass="w-100" [options]="metalList" formControlName="metal_id" optionLabel="name" optionValue="id" (onChange)="GetPurityListAndCategoryList($event.value)" [showClear]="true" />
+                            <label>Metal</label>
+                        </p-floatLabel>
+                        <!-- <div *ngIf="filterFC.metal_id.invalid && (filterFC.metal_id.dirty || filterFC.metal_id.touched)" class="text-danger">
+                            <small *ngIf="filterFC.metal_id.hasError('required')">Please select Metal type.</small>
+                        </div> -->
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-12 mb-4">
+                        <p-floatLabel>
+                            <p-dropdown styleClass="w-100" [options]="PurityList" formControlName="purity_id" optionLabel="name" optionValue="id" (onChange)="filterProduct()" [showClear]="true" />
+                            <label>Purity</label>
+                        </p-floatLabel>
+                        <!-- <div *ngIf="filterFC.purity_id.invalid && (filterFC.purity_id.dirty || filterFC.purity_id.touched)" class="text-danger">
+                            <small *ngIf="filterFC.purity_id.hasError('required')">Please select purity.</small>
+                        </div> -->
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-12 mb-4">
+                        <p-floatLabel>
+                            <p-dropdown styleClass="w-100" [options]="categoryList" formControlName="catagory_id" optionLabel="name" optionValue="id" (onChange)="filterProduct()" [showClear]="true"/>
+                            <label>Category</label>
+                        </p-floatLabel>
+                        <!-- <div *ngIf="filterFC.catagory_id.invalid && (filterFC.catagory_id.dirty || filterFC.catagory_id.touched)" class="text-danger">
+                            <small *ngIf="filterFC.catagory_id.hasError('required')">Please select Category.</small>
+                        </div> -->
+                    </div>
+                    <!-- <div class="mb-4">
+                        <p-floatLabel>
+                            <p-dropdown styleClass="w-100" [options]="subCategoryList" formControlName="sub_catagory_id" optionLabel="name" optionValue="id" (onChange)="subCategoryChange($event)"/>
+                            <label>Sub category<span style="color: red;"> * </span></label>
+                        </p-floatLabel>
+                        <div *ngIf="filterFC.sub_catagory_id.invalid && (filterFC.sub_catagory_id.dirty || filterFC.sub_catagory_id.touched)" class="text-danger">
+                            <div *ngIf="filterFC.sub_catagory_id.hasError('required')">Please select Subcategory.</div>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="mb-4">
+                    <h4 class="mt-0">Weight</h4>
+                    <p-slider [(ngModel)]="weight" [range]="true" styleClass="w-100" [max]="1000" [min]="0" [step]="0.001" [ngModelOptions]="{standalone: true}" (onChange)="weightRangeValueChange()" />
+                    <div class="d-flex flex-row flex-nowrap align-items-center justify-content-between mt-4">
+                        <p-inputNumber [(ngModel)]="weight[0]" size="2" class="text-center" [readonly]="true" [minFractionDigits]="0" [maxFractionDigits]="3" />
+                        <span class="fw-semibold">to</span>
+                        <p-inputNumber [(ngModel)]="weight[1]" size="2" class="text-center" [readonly]="true" [minFractionDigits]="0" [maxFractionDigits]="3" />
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h4 class="mt-0">Size</h4>
+                    <div class="d-grid gap-3" style="grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));">
+                        <div *ngFor="let item of SizeList">
+                            <p-checkbox [(ngModel)]="selectedAttribute" name="proSizeFilter" [label]="item.attribute_detail_name" [value]="item.attribute_detail_id" (onChange)="filterProduct()" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3" [formGroup]="filterForm">
+                    <h4>Availability</h4>
+                    <p-checkbox formControlName="is_stock" [binary]="true" name="proSizeFilter" label="In Stock" (onChange)="filterProduct()" />
+                </div>
+                <!-- <div class="text-end">
+                    <p-button label="Filter" icon="pi pi-filter" (click)="filterProduct()" />
+                </div> -->
+            </p-card>
+        </div>
+
+        <div class="col-lg-9 mb-3" #productListContainer>
+            <p-dataView #dv [value]="productList" [rows]="10" [paginator]="true" [alwaysShowPaginator]="false" [totalRecords]="productTotalCount" [rowsPerPageOptions]="[10,15,20,25,30,40]" [lazy]="true" emptyMessage="Products not found" (onPage)="productPageEve($event)">
+                <!-- <p-dataView #dv [value]="productList" [rows]="5" [paginator]="true" [alwaysShowPaginator]="false" [totalRecords]="productTotalCount" [rowsPerPageOptions]="[5,10,15,20,25,30,40]" [lazy]="true" emptyMessage="products not found" (onPage)="productPageEve($event)"
+                (onLazyLoad)="productLazyLoad($event)"> -->
+                <ng-template pTemplate="list" let-products>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4 mb-4" *ngFor="let product of products">
+                            <p-card class="position-relative">
+                                <ng-template pTemplate="header">
+                                    <!-- <p-image alt="" styleClass="w-100" imageClass="object-fit-contain" src="../../assets/images/product-catalog/18K-Gold-Necklace-AFN01160.jpg" [preview]="true" [imageStyle]="{'border-start-start-radius': '6px','border-start-end-radius': '6px', 'aspect-ratio': '1 / 1'}"/> -->
+
+                                    <p-image alt="" styleClass="w-100" class="object-fit-contain" [src]="product.product_images && product.product_images.length > 0 ? product.product_images[0] : '../../assets/images/no_image.jpg'" [preview]="true" [imageStyle]="{
+                                    'border-start-start-radius': '6px',
+                                    'border-start-end-radius': '6px', 
+                                    'aspect-ratio': '1 / 1'
+                                    }" />
+                                    <!-- <p-image alt="" styleClass="w-100" class="object-fit-contain" [src]="product.product_images[0]" [preview]="true" [imageStyle]="{'border-start-start-radius': '6px','border-start-end-radius': '6px', 'aspect-ratio': '1 / 1'}"/> -->
+                                </ng-template>
+                                <ng-template pTemplate="content">
+                                    <div class="d-flex justify-content-center" style="color: #56CA00;" ><span><svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M40-200v-560h80v560H40Zm120 0v-560h80v560h-80Zm120 0v-560h40v560h-40Zm120 0v-560h80v560h-80Zm120 0v-560h120v560H520Zm160 0v-560h40v560h-40Zm120 0v-560h120v560H800Z"/></svg></span>&nbsp;<span>{{product.product_code}}</span></div>
+                                    <div class="mb-3">
+                                        <span>{{product.product_name}}</span>
+                                    </div>
+                                    <div class="d-flex flex-row flex-wrap align-items-center justify-content-between mb-3 gap-3">
+                                        <!-- <div>{{product.product_code}}</div>                                       -->
+                                        <div class="d-inline-flex align-items-center" style="color: #FFB400;" *ngIf="product.product_combination != ''">
+                                            <span class="d-inline-flex align-items-center justify-content-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M80-80q0-111 29.5-189.5T185-400q46-52 103-80.5T400-520v-120q-137-17-228.5-84.5T80-880h800q0 88-91.5 155.5T560-640v120q55 11 112 39.5T775-400q46 52 75.5 130.5T880-80H640v-80h155q-18-152-113.5-220T480-448q-106 0-201.5 68T165-160h155v80H80Zm400-635q91 0 162-24.5T755-800H205q42 36 113 60.5T480-715Zm0 635q-33 0-56.5-23.5T400-160q0-17 6.5-31t17.5-25q24-24 81-50.5T640-320q-28 78-54 135t-50 81q-11 11-25 17.5T480-80Zm0-635Z"/></svg>
+                                            </span>
+                                            <span class="ms-1">{{product.product_combination}}</span>
+                                        </div>
+
+                                        <div class="d-inline-flex align-items-center" style="color: #d3f904;" *ngIf="product.purity_name != ''">
+                                            <span class="d-inline-flex align-items-center justify-content-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="currentColor"><path d="M480-80q-83 0-156-31.5t-127-86Q143-252 111.5-325T80-480q0-157 104-270t256-128v120q-103 14-171.5 92.5T200-480q0 116 82 198t198 82q66 0 123.5-28t96.5-76l104 60q-54 75-139 119.5T480-80Zm366-238-104-60q9-24 13.5-49.5T760-480q0-107-68.5-185.5T520-758v-120q152 15 256 128t104 270q0 44-8 85t-26 77Z"/></svg>
+                                            </span>
+                                            <span class="ms-1">{{product.purity_name}}</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="d-flex flex-row flex-wrap align-items-center justify-content-center" *ngIf="(product.stock == null && IsOrderProduct == true) || (product.stock != null)">
+                                        <p-inputNumber [showButtons]="true" [inputStyle]="{width: '75px'}" placeholder="0" (onInput)="ProductQuantityValidation(product)" [(ngModel)]="product.quantity" inputStyleClass="text-center" buttonLayout="horizontal" spinnerMode="horizontal" [step]="1" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                                        />
+                                    </div>
+                                    <div class="mt-2" *ngIf="(product.stock == null && IsOrderProduct == true) || (product.stock != null)"> 
+                                        <p-button styleClass="w-100" label="Add" severity="warning" size="small" (click)="AddToCart(product)" icon="pi pi-cart-plus"></p-button>
+                                        <!-- <p-button styleClass="w-100" label="Add" severity="warning" size="small" (click)="AddToCart(product)" icon="pi pi-cart-plus"></p-button> -->
+                                    </div>
+
+                                </ng-template>
+                                <div *ngIf="product.stock == null">
+                                    <div class="pro-stock-ribbon position-absolute text-center" style="background-color: #ff7074;">Out of Stock</div>
+                                </div>
+                                <div *ngIf="product.stock != null">
+                                    <div class="pro-stock-ribbon position-absolute text-center" style="background-color: #78D533;">{{product.stock}} - In Stock</div>
+                                </div>
+                            </p-card>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="empty">
+                    <div class="text-center p-text-secondary">No matching products available.</div>
+                </ng-template>
+            </p-dataView>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+<app-sticky-page-header class="mb-4" [title]="CategoryId == 0 ?  'New Category' : 'Edit - '+ CategoryData.name"
+    defaultHref="/Category" [isCardTitle]="false"></app-sticky-page-header>
+<p-card header="Category">
+    <div class="row" [formGroup]="CategoryForm">
+        <div class="col-12 my-3">
+            <p-floatLabel>
+                <p-dropdown [options]="CategorybySubCategoryList" [filter]="true" appendTo="body" optionLabel="name" optionValue="id"
+                    formControlName="parent_category_id" [(ngModel)]="CategoryData.parent_category_id"
+                    placeholder="Select Category" styleClass="w-100" [readonly]="CategoryId != 0" />
+                <label class="mb-2">Main Category<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="parent_category_id" [MessageArray]="CategoryValidationMessage"
+                [FormGroupName]="CategoryForm"></app-validation>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <p-dropdown [options]="MetalList" [filter]="true" appendTo="body" optionLabel="name" optionValue="id" formControlName="metal_id"
+                    [(ngModel)]="CategoryData.metal_id" placeholder="Select Metal" styleClass="w-100" />
+                <label class="mb-2">Metal<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="metal_id" [MessageArray]="CategoryValidationMessage"
+                [FormGroupName]="CategoryForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <input type="text" pInputText class="w-100" formControlName="name" [(ngModel)]="CategoryData.name" />
+                <label>Name<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="name" [MessageArray]="CategoryValidationMessage"
+                [FormGroupName]="CategoryForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3" *ngIf="CategoryData.id">
+            <p-floatLabel>
+                <input type="text" pInputText class="w-100" formControlName="display_order" placeholder="Enter Display Order" [(ngModel)]="CategoryData.display_order" />
+                <label>Display Order<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="display_order" [MessageArray]="CategoryValidationMessage"
+                [FormGroupName]="CategoryForm"></app-validation>
+        </div>
+
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 my-3">
+            <label>Is Stock</label>
+            <br/>
+            <br/>
+            <p-inputSwitch formControlName="is_stock_category" [(ngModel)]="CategoryData.is_stock_category" />
+            <app-validation propertyName="is_stock_category" [MessageArray]="CategoryValidationMessage"
+                [FormGroupName]="CategoryForm"></app-validation>
+        </div>
+
+
+        <div class="col-12 text-end mb-3">
+            <p-button icon="pi pi-times" [label]="CategoryId == 0 ? 'Clear' : 'Cancel'" class="me-3" [raised]="true"
+                severity="danger" (click)="Cancel()" />
+            <button pButton pRipple icon="pi pi-check-circle" class="me-3" [label]="CategoryId == 0 ? 'Save' : 'Update'"
+                class="p-button-success" (click)="CategorySaveOrUpdate()" *ngIf="!IsUsed" ></button>
+        </div>
+    </div>
+</p-card>
+
+
+<p-confirmDialog header="Confirmation" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

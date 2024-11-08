@@ -1,0 +1,478 @@
+<p-card>
+    <app-sticky-page-header class="mb-4" [title]="PurchaseReceiptId == 0 ? 'New Purchase Receipt' : ' Purchase Receipt : Edit - '+ purchaseReceiptFc.stock_number.value"
+        defaultHref="/PurchaseReceiptList" [isCardTitle]="true" (isPinned)="headerPinned = $event"
+        class="mb-3">
+        <ng-template mTemplate tempName="buttons">
+            <p-button pRipple icon="pi pi-times" label="Cancel" severity="secondary" (click)="Cancel()"
+            [size]="headerPinned ? 'small' : undefined" />&nbsp;
+        <p-button *ngIf="PurchaseReceiptDetailList?.length == 0" pRipple icon="pi pi-check-circle" [label]="PurchaseReceiptId == 0 ? 'Save' : 'Update'" severity="success"
+            (click)="SaveOrUpdatePurchase()" [size]="headerPinned ? 'small' : undefined"></p-button>        
+        </ng-template>
+    </app-sticky-page-header>
+    <div class="row mt-3 mb-4" [formGroup]="purchaseReceiptForm">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <input pInputText type="text" class="w-100" formControlName="stock_number"  style="background: var(--tbl-header-bg)" readonly/>
+                <label>Purchase Receipt Number<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-calendar dateFormat="dd-M-yy" formControlName="stock_entry_date_time" styleClass="w-100" [showTime]="true" [(ngModel)]="PurchaseReceiptData.stock_entry_date_time" [hourFormat]="12"/>
+                <label>Purchase Date<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="stock_entry_date_time" [MessageArray]="PurchaseReceiptValidationMessages"
+            [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="EmployeeList" formControlName="received_by_id" optionLabel="name" optionValue="id"/>
+                <label>Received By<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="received_by_id" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="EmployeeList" formControlName="hand_over_id" optionLabel="name" optionValue="id"/>
+                <!-- <p-dropdown styleClass="w-100" [options]="EmployeeList" formControlName="hand_over_id" (onChange)="EmployeeValidation($event.value)" optionLabel="name" optionValue="id"/> -->
+                <label>Handovered By<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="hand_over_id" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="BusinessList" formControlName="business_from_id" optionLabel="business_name" optionValue="id"/>
+                <label>Business From<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="business_from_id" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="BusinessList" formControlName="business_to_id" (onChange)="BusinessValidation($event.value)" optionLabel="business_name" optionValue="id"/>
+                <label>Business To<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="business_to_id" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="MetalList" formControlName="metal_id" (onChange)="GetPurityList($event.value)" optionLabel="name" optionValue="id"/>
+                <label>Metal<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="metal_id" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [options]="PurityList" formControlName="purity_id" optionLabel="name" optionValue="id"/>
+                <label>Purity<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="purity_id" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+            <p-floatLabel>
+                <textarea rows="4" cols="30" class="w-100" pInputTextarea formControlName="note"></textarea>
+                <label>Note</label>
+            </p-floatLabel>
+            <small class="d-inline-block mt-2">
+                <app-validation propertyName="note" [MessageArray]="PurchaseReceiptValidationMessages"
+                [FormGroupName]="purchaseReceiptForm"></app-validation>
+            </small>
+        </div>
+
+    </div>
+</p-card>
+
+<div class="mt-2" *ngIf="PurchaseReceiptId != 0" >
+    <p-card>
+        <ng-template pTemplate="header">
+            <div class="d-flex flex-row align-items-center justify-content-between p-3">
+                <h2 class="m-0">Detail List</h2>
+                <p-button icon="pi pi-plus" label="Add Product" [raised]="true" severity="primary" (click)="AddDetailProduct(0)"/>
+            </div>
+        </ng-template>
+        <!-- <div class="col-12 mt-2 text-end">
+            <p-button icon="pi pi-plus" label="Add Product" [raised]="true" severity="primary" (click)="AddDetailProduct(0)"/>
+        </div> -->
+        <div class="mt-2">
+            <p-table [responsive]="true" #dt [globalFilterFields]="['']" [value]="PurchaseReceiptDetailList" [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [scrollable]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>
+                            Product
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>
+                            Gross Wt.gms
+                        </th>
+                        <th>
+                            Other Wt.gms
+                        </th>
+                        <th>
+                            Nett Wt.gms
+                        </th>
+                        <th>
+                            Melting
+                        </th>
+                        <th>
+                            Wastage
+                        </th>
+                        <th>
+                            Fine Wt
+                        </th>
+                        <th>
+                            Other Charge
+                        </th>
+                        <th>
+                            MC Amount
+                        </th>
+                        <th class="text-end">
+                            Action
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-item>
+                    <tr [style]="item.history ? {'background-color': 'rgb(255 180 0 / 0.08)'} : null">
+                        <td>
+                            <div>
+                                <div class="pb-2">{{item.product_name}}</div>
+                                
+                                <div class="pt-2" [style]="{'border-top': '1px solid var(--body-color-op22)'}" *ngIf="item.combination">
+                                    {{item.combination}}
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{item.stock_qty}} {{item.unit_name}}</td>
+                        <td class="text-end" >{{item.gross_weight | number: '1.3-3'}}</td>
+                        <td>
+                            <div class="d-flex flex-row align-items-center justify-content-end">
+                                <span class="text-end">{{item.other_weight | number: '1.3-3'}}</span>
+                                <p-button icon="pi pi-info-circle" [rounded]="true" [text]="true" size="large" (click)="oWOP.toggle($event)" *ngIf="parseString(item.mixed_material).length"/>
+                                <p-overlayPanel #oWOP styleClass="p-0">
+                                    <ng-template pTemplate="content">
+                                        <table style="border-collapse: collapse;">
+                                            <tr>
+                                                <th class="text-start" >Material</th>
+                                                &nbsp;
+                                                <th class="text-end" >Weight</th>
+                                            </tr>
+                                            <tr *ngFor="let mixedMaterial of parseString(item.mixed_material);last as isLast" [style]="isLast ? null : {'border-bottom': '1px solid var(--body-color-op22)'}">
+                                                <td class="py-3">{{mixedMaterial.name}}</td>
+                                                 &nbsp;
+                                                <td class="ps-3 py-3 text-end">{{mixedMaterial.weight | number: '1.3-3'}} gm</td>
+                                            </tr>
+                                        </table>                            
+                                    </ng-template>
+                                </p-overlayPanel>
+                            </div>
+                        </td>
+                        <td class="text-end">{{item.net_weight | number: '1.3-3'}}</td>
+                        <td class="text-end">{{item.melting | number: '1.3-3'}}&nbsp;%</td>
+                        <td class="text-end">{{item.wastage}}&nbsp;%</td>
+                        <td class="text-end">{{item.fine_weight | number: '1.3-3'}}</td>
+                        <td>
+                            <div class="d-flex flex-row align-items-center justify-content-end">
+                                <span class="text-end">{{CurrencySymbol}} {{item.other_charges | number: '1.2-2'}}</span>
+                                <p-button icon="pi pi-info-circle" [rounded]="true" [text]="true" size="large" (click)="oosd.toggle($event)" *ngIf="parseString(item.mixed_material).length"/>
+                                <p-overlayPanel #oosd styleClass="p-0">
+                                    <ng-template pTemplate="content">
+                                        <table style="border-collapse: collapse;">
+                                            <tr>
+                                                <th class="text-start" >Material</th>
+                                                &nbsp;
+                                                <th class="text-end" >Amount</th>
+                                            </tr>
+                                            <tr *ngFor="let mixedMaterial of parseString(item.mixed_material);last as isLast" [style]="isLast ? null : {'border-bottom': '1px solid var(--body-color-op22)'}">
+                                                <td class="py-3">{{mixedMaterial.name}}</td>
+                                                 &nbsp;
+                                                <td class="ps-3 py-3 text-end">{{CurrencySymbol}} {{mixedMaterial.amount | number: '1.2-2'}}</td>
+                                            </tr>
+                                        </table>
+                                    </ng-template>
+                                </p-overlayPanel>
+                            </div>
+                        </td>
+                        <td class="text-end">{{CurrencySymbol}} {{item.mc_amount | number: '1.2-2'}}</td>
+                        <td>
+                            <div class="d-flex flex-row flex-nowrap align-items-center justify-content-end" style="justify-content: end;">
+                                
+                                <p-button *ngIf="item.history" icon="pi pi-file" [rounded]="true" severity="warning" size="small" (click)="nOP.toggle($event)"/>&nbsp;
+                                <p-button icon="pi pi-pencil" [rounded]="true" severity="primary" (click)="AddDetailProduct(item.id)" />
+                                <p-overlayPanel #nOP styleClass="p-0" >
+                                    <h5 class="mb-0">Notes</h5>
+                                    <div class="py-3" *ngFor="let notes of parseString(item.history);last as isLast" [style]="isLast ? null : {'border-bottom': '1px solid var(--body-color-op22)'}">
+                                        <div class="mb-3">{{notes.notes}}</div>
+                                        <small class="p-text-secondary">Modified Date</small>
+                                        <div class="mb-3">{{notes.modified_date | date:'dd MMM y, h:mm:ss a'}}</div>
+                                        <small class="p-text-secondary">Modified By</small>
+                                        <div>{{notes.name}}</div>
+                                    </div>
+                                </p-overlayPanel>
+                            </div>
+                            <!-- <p-button icon="pi pi-trash" [rounded]="true" severity="danger" (click)="DeletePurchaseDetail(item.id)" /> -->
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="2">Total</td>
+                        <td class="text-end">
+                            {{PurchaseReceiptDetailList | GetSumValue : 'gross_weight' | number: '1.3-3'}}
+                        </td>
+                        <td>
+                            {{PurchaseReceiptDetailList | GetSumValue : 'other_weight' | number: '1.3-3'}}
+                        </td>
+                        <td class="text-end">
+                            {{PurchaseReceiptDetailList | GetSumValue : 'net_weight' | number: '1.3-3'}}
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">
+                            {{PurchaseReceiptDetailList | GetSumValue : 'fine_weight' | number: '1.3-3'}}
+                        </td>
+                        <td class="text-end">
+                            {{CurrencySymbol}} {{PurchaseReceiptDetailList | GetSumValue : 'other_charges' | number: '1.2-2'}}
+                        </td>
+                        <td class="text-end">
+                            {{CurrencySymbol}} {{PurchaseReceiptDetailList | GetSumValue : 'mc_amount' | number: '1.2-2'}}
+                        </td>
+                        <td></td>
+                    </tr>
+                </ng-template>
+
+
+            </p-table>
+        </div>
+    </p-card>
+</div>
+
+<p-dialog [modal]="true" [(visible)]="PurchaseDialouge" [style]="{width: '90vw', height : '90vw'}" *ngIf="PurchaseDialouge" [closable]="false">
+    <ng-template pTemplate="header">
+        <div class="d-flex flex-row align-items-center justify-content-between w-100">
+            <h2 class="m-0">{{this.PurchaseReceiptDetailFC.id.value ? 'Edit' : 'Add'}} Product</h2>
+            <p-button icon="pi pi-times" [rounded]="true" [text]="true" severity="secondary " (click)="CancelDetailPopup()"/>
+        </div>
+    </ng-template>
+    <div [formGroup]="PurchaseReceiptDetailForm">
+        <div class="row mt-2" >        
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+                <p-floatLabel>
+                    <p-dropdown styleClass="w-100" [options]="CategoryDropdown" formControlName="category_id" optionLabel="name" optionValue="id" (onChange)="categoryChange($event)"/>
+                    <label>Category<span style="color: red;"> * </span></label>
+                </p-floatLabel>
+                <app-validation propertyName="category_id" [MessageArray]="DetailValidationMessage"
+                [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+                <p-floatLabel>
+                    <p-dropdown styleClass="w-100" [options]="productList" formControlName="product_id" [disabled]="PurchaseReceiptDetailData.category_id == '' " (onChange)="productChange($event)" optionLabel="name" optionValue="id"/>
+                    <label>Product<span style="color: red;"> * </span></label>
+                </p-floatLabel>
+                <app-validation propertyName="product_id" [MessageArray]="DetailValidationMessage"
+                [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4" *ngIf="variantList.length">
+                <p-floatLabel>
+                    <p-dropdown styleClass="w-100" [options]="variantList" formControlName="product_variants_id_proxy" (onChange)="variantChange($event)" optionLabel="combination"/>
+                    <label>Combination<span style="color: red;"> * </span></label>
+                </p-floatLabel>
+                <app-validation propertyName="product_variants_id" [MessageArray]="DetailValidationMessage"
+                [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+                <p-floatLabel>
+                    <p-inputNumber formControlName="stock_qty" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                    [minFractionDigits]="0" [maxFractionDigits]="0" />
+                    <label class="mb-2">Quantity<span style="color: #FC6161; "> * </span></label>
+                </p-floatLabel>
+                <app-validation propertyName="stock_qty" [MessageArray]="DetailValidationMessage"
+                    [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+        </div>
+        
+        <p-card>
+            <h4 class="mt-0">Weight Details</h4>
+            <div class="row">
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <p-floatLabel>
+                        <label class="mb-2" >Gross Weight<span style="color: #FC6161; "> * </span></label>                
+                            <p-inputNumber formControlName="gross_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                            [minFractionDigits]="3" [maxFractionDigits]="3" (onInput)="GetFineWeight(PurchaseReceiptDetailForm.value.wastage)" [min]="0.0" suffix=" gm"/>
+                    </p-floatLabel>  
+                    <app-validation propertyName="gross_weight" [MessageArray]="DetailValidationMessage"
+                        [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+                </div>
+    
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <p-floatLabel>
+                        <label class="mb-2" >Other Weight<span style="color: #FC6161; "> * </span></label>                
+                            <p-inputNumber formControlName="other_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                            [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" suffix="gm" (onInput)="GetNettWeight($event.value)" readonly/>
+                    </p-floatLabel> 
+                    <app-validation propertyName="other_weight" [MessageArray]="DetailValidationMessage"
+                        [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+                </div>
+    
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <p-floatLabel>
+                        <label class="mb-2" >Net Weight<span style="color: #FC6161; "> * </span></label>                
+                        <p-inputNumber formControlName="net_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                        [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" readonly suffix=" gm"/>
+                    </p-floatLabel>                    
+                    <app-validation propertyName="net_weight" [MessageArray]="DetailValidationMessage"
+                        [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+                </div>
+    
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <p-floatLabel>
+                        <label class="mb-2" >Melting<span style="color: red;"> * </span>    </label>                
+                        <p-inputNumber formControlName="melting" styleClass="w-100" (onInput)="GetFineWeightByMelting($event.value)" inputStyleClass="w-100" class="w-100"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.0" suffix=" %"/>                   
+                    </p-floatLabel>
+                    <app-validation propertyName="melting" [MessageArray]="DetailValidationMessage"
+                        [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+                </div>
+    
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <p-floatLabel>
+                        <label class="mb-2" >Wastage</label>                
+                        <p-inputNumber formControlName="wastage" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                        [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.0" suffix=" %" (onInput)="GetFineWeight($event.value)"/>
+                    </p-floatLabel>                   
+                    <app-validation propertyName="wastage" [MessageArray]="DetailValidationMessage"
+                        [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+                </div>
+    
+                <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <p-floatLabel>
+                    <label class="mb-2" >Fine Weight<span style="color: #FC6161; "> * </span></label>                
+                    <p-inputNumber formControlName="fine_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                    [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" suffix=" gm" [(ngModel)]="PurchaseReceiptDetailData.fine_weight" readonly/>
+                    </p-floatLabel>
+                    <app-validation propertyName="fine_weight" [MessageArray]="DetailValidationMessage"
+                        [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+                </div>
+            </div>
+        </p-card>
+        
+        <div class="row mt-3">
+            <div class="col-6">
+                <p-card>
+                    <div class="mb-4" formArrayName="mixed_material" *ngIf="mixedMaterialFA.length">
+                        <h4 class="mt-0">Other Weight</h4>                    
+                        <table class="w-100" style="border-collapse: collapse">
+                            <tr *ngFor="let mixMaterial of mixedMaterialFA.controls;let i = index;last as isLast" [style]="isLast? null : { 'border-bottom': '1px solid var(--body-color-op22)' }">
+                                <td class="pe-2 py-3">{{ mixMaterial.get("material_name").value }}</td>
+                                <td class="ps-2 py-3" style="max-width: 75px">
+                                    <div [formGroup]="mixMaterial">
+                                        <p-floatLabel>
+                                            <p-inputNumber formControlName="weight" styleClass="w-100" inputStyleClass="w-100"
+                                                class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3" suffix=" gm"/>
+                                                <label>Weight</label>
+                                            </p-floatLabel>
+                                            <div *ngIf="mixMaterial.get('weight').invalid && (mixMaterial.get('weight').dirty || mixMaterial.get('weight').touched)" class="text-danger mt-1">
+                                            <small *ngIf="mixMaterial.get('weight').hasError('required')">Please enter
+                                                {{ mixMaterial.get("material_name").value }} weight.</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="ps-2 py-3" style="max-width: 75px">
+                                    <div [formGroup]="mixMaterial">
+                                        <p-floatLabel>
+                                            <p-inputNumber formControlName="amount" styleClass="w-100" inputStyleClass="w-100"
+                                                class="w-100" [minFractionDigits]="2" [maxFractionDigits]="2" />
+                                            <label>{{CurrencySymbol}} Amount</label>                                          
+                                        </p-floatLabel>
+                                        <div *ngIf="mixMaterial.get('amount').invalid && (mixMaterial.get('amount').dirty || mixMaterial.get('amount').touched)" class="text-danger mt-1">
+                                            <small *ngIf="mixMaterial.get('amount').hasError('required')">Please enter
+                                                {{ mixMaterial.get("material_name").value }} amount.</small>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>                               
+                    </div>
+                </p-card>
+            </div>
+            <div class="col-6">
+                <p-card>
+                <div class="row mt-3">
+                <h4 class="mt-0">Other Details</h4>
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+                <p-floatLabel>
+                    <p-inputNumber formControlName="other_charges" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                    [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.0" readonly/>
+                    <label class="mb-2">{{CurrencySymbol}} Other Charge</label>
+                </p-floatLabel>
+                <app-validation propertyName="other_charges" [MessageArray]="DetailValidationMessage"
+                    [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+                
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+                <p-floatLabel>
+                    <p-inputNumber formControlName="mc_amount" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                    [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.0" />
+                    <label class="mb-2">{{CurrencySymbol}} MC Amount</label>
+                </p-floatLabel>
+                <app-validation propertyName="mc_amount" [MessageArray]="DetailValidationMessage"
+                    [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+        </div>
+        
+        </p-card>
+            </div>
+
+            <div class="row mt-3" *ngIf="PurchaseDetailId != 0" >
+            <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4" >
+                <p-floatLabel>
+                    <textarea rows="3" cols="30" formControlName="notes" class="w-100" pInputTextarea></textarea>
+                    <label>Note<span style="color: #FC6161; "> * </span></label>
+                </p-floatLabel>
+                <app-validation propertyName="notes" [MessageArray]="DetailValidationMessage"
+                [FormGroupName]="PurchaseReceiptDetailForm"></app-validation>
+            </div>
+        </div>
+        </div>
+    </div>
+    <p-footer>
+        <div class="col-12 text-end mt-3">
+            <button pButton pRipple icon="pi pi-check-circle" label="Cancel" class="p-button-secondary"
+            (click)="CancelDetailPopup()"></button>
+            <button pButton pRipple icon="pi pi-check-circle" label="Save" class="p-button-success"
+            (click)="SaveOrUpdatePurchaseDetail()"></button>
+        </div>
+    </p-footer> 
+</p-dialog>

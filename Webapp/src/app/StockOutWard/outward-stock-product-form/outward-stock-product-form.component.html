@@ -1,0 +1,134 @@
+<div class="row mt-2" [formGroup]="stockForm" style="padding-bottom: 45px">    
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <!-- <input type="text" pInputText formControlName="category_name" class="w-100"/> -->
+            <p-dropdown styleClass="w-100" [options]="categoryList" formControlName="category_id" optionLabel="name"
+                optionValue="id" (onChange)="categoryChange($event)" />
+            <label class="mb-2">Category<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="
+        stockFc.category_id.invalid &&
+        (stockFc.category_id.dirty || stockFc.category_id.touched)
+      " class="text-danger mt-1">
+            <small *ngIf="stockFc.category_id.hasError('required')">Please select category.</small>
+        </div>
+    </div>    
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="productList" optionLabel="product_name" appendTo="body" formControlName="product_id_proxy"
+                (onChange)="productChange($event)" [filter]="true" filterBy="product_name"></p-dropdown>
+            <label class="mb-2">Product<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="
+        stockFc.product_id_proxy.invalid &&
+        (stockFc.product_id_proxy.dirty || stockFc.product_id_proxy.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.product_id.hasError('required')">Please select product.</small>
+            <small *ngIf="stockFc.product_id_proxy.hasError('isDuplicate')">Product already exist.</small>
+        </div>
+    </div>
+
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4" *ngIf="variantList.length">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="variantList" formControlName="product_variants_id_proxy"
+                optionLabel="combination" (onChange)="variantChange($event)" />
+            <label class="mb-2">Variant<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.product_variants_id_proxy.invalid && (stockFc.product_variants_id_proxy.dirty || stockFc.product_variants_id_proxy.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.product_variants_id.hasError('required')">Please select variant.</small>
+            <small *ngIf="stockFc.product_variants_id_proxy.hasError('isDuplicate')">Variant already selected.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <input type="text" pInputText class="w-100" [readonly]="true" [value]="qtyNumIp.max ? qtyNumIp.max : ''" style="background: var(--tbl-header-bg)"/>
+            <label class="mb-2">Available Stock<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>        
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <p-inputNumber #qtyNumIp formControlName="stock_qty" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                [min]="0" />
+            <label class="mb-2">Quantity<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.stock_qty.invalid && (stockFc.stock_qty.dirty || stockFc.stock_qty.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.stock_qty.hasError('required')">Please select quantity.</small>
+            <small *ngIf="stockFc.stock_qty.hasError('max')">Only {{qtyNumIp.max}} stock available.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <input type="text" pInputText formControlName="unit_name" class="w-100" />
+            <label class="mb-2">Unit<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="gross_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" />
+            <label class="mb-2">Gross Weight {{stockFc.unit_name.value ? 'in' : ''}} {{stockFc.unit_name.value}}<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="
+        stockFc.gross_weight.invalid &&
+        (stockFc.gross_weight.dirty || stockFc.gross_weight.touched)
+      " class="text-danger mt-1">
+            <small *ngIf="stockFc.gross_weight.hasError('required')">Please select gross weight.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="other_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" [readonly]="true" [inputStyle]="{'background': 'var(--tbl-header-bg)'}"/>
+            <label class="mb-2">Other Weight {{stockFc.unit_name.value ? 'in' : ''}} {{stockFc.unit_name.value}}<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="net_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100"
+                [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" [readonly]="true" [inputStyle]="{'background': 'var(--tbl-header-bg)'}"/>                
+            <label class="mb-2">Nett Weight {{stockFc.unit_name.value ? 'in' : ''}} {{stockFc.unit_name.value}}<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+    </div>
+    <div class="col-12 mb-4" formArrayName="mixed_material">
+        <div class="rounded border border-1 p-3" *ngIf="mixedMaterialFA.length">
+            <h4 class="mt-0 mb-0">Other Weight</h4>
+            <table class="w-100" style="border-collapse: collapse">
+                <tr *ngFor="let mixMaterial of mixedMaterialFA.controls;let i = index;last as isLast" [style]="isLast? null : { 'border-bottom': '1px solid var(--body-color-op22)' }">
+                    <td class="pe-2 py-3">{{ mixMaterial.get("name").value }}</td>
+                    <td class="px-2 py-3 text-center">:</td>
+                    <td class="ps-2 py-3" style="max-width: 75px">
+                        <div [formGroup]="mixMaterial">
+                            <p-floatLabel>
+                                <p-inputNumber formControlName="weight" styleClass="w-100" inputStyleClass="w-100"
+                                    class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3" [min]="0.0" />
+                                <!-- <label class="mb-2">{{mixMaterial.get('name').value}}<span style="color: #FC6161;"> * </span></label> -->
+                            </p-floatLabel>
+                            <div *ngIf="
+                  mixMaterial.get('weight').invalid &&
+                  (mixMaterial.get('weight').dirty ||
+                    mixMaterial.get('weight').touched)
+                " class="text-danger mt-1">
+                                <small *ngIf="mixMaterial.get('weight').hasError('required')">Please enter
+                                    {{ mixMaterial.get("name").value }} weight.</small>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 mb-4" *ngIf="stockFc?.notes">
+        <p-floatLabel>
+            <textarea rows="5" cols="30" pInputTextarea formControlName="notes" class="w-100"></textarea>
+            <label class="mb-2">Notes<span style="color: #fc6161"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.notes.invalid && (stockFc.notes.dirty || stockFc.notes.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.notes.hasError('required')">Please enter notes.</small>
+        </div>
+    </div>
+</div>
+
+<div class="text-end" style="position: fixed;bottom: 0;background-color: var(--surface-card);left: 0;right: 0;padding: 10px 16px;">
+    <p-button label="Close" severity="danger" class="me-3" icon="pi pi-times" (click)="ref.close()" />
+    <p-button [label]="config.data.isEdit ? 'Update' : 'Save'" severity="success" icon="pi pi-check-circle"
+        (click)="saveStock()" *ngIf="!stockForm.disabled"/>
+</div>

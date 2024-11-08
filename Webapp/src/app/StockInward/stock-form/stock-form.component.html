@@ -1,0 +1,102 @@
+<div class="row mt-2"  [formGroup]="stockForm" style="padding-bottom: 45px;">
+    <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="metalList" formControlName="metal_id" optionLabel="name" optionValue="id"/>
+            <label class="mb-2">Metal<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.metal_id.invalid && (stockFc.metal_id.dirty || stockFc.metal_id.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.metal_id.hasError('required')">Please select metal.</small>
+        </div>
+    </div> -->
+    <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="purityList" formControlName="purity" optionLabel="name" optionValue="id"/>
+            <label class="mb-2">Purity<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.purity.invalid && (stockFc.purity.dirty || stockFc.purity.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.purity.hasError('required')">Please select purity.</small>
+        </div>
+    </div> -->
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="metalCategoryList" formControlName="category_id" optionLabel="name" optionValue="id"/>
+            <label class="mb-2">Category<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.category_id.invalid && (stockFc.category_id.dirty || stockFc.category_id.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.category_id.hasError('required')">Please select category.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="variantList" formControlName="variant_id" optionLabel="name" optionValue="id"/>
+            <label class="mb-2">Variant<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.variant_id.invalid && (stockFc.variant_id.dirty || stockFc.variant_id.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.variant_id.hasError('required')">Please select variant.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-dropdown styleClass="w-100" [options]="productList" formControlName="product_id" optionValue="id" (onChange)="productChange($event)" [filter]="true" filterBy="name">
+                <ng-template let-product pTemplate="selectedItem">
+                    <div>{{product.name}}</div>
+                </ng-template>
+                <ng-template let-product pTemplate="item">
+                    <div>{{product.name}} {{product.category_name}}</div>
+                </ng-template>
+            </p-dropdown>
+            <label class="mb-2">Product<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.product_id.invalid && (stockFc.product_id.dirty || stockFc.product_id.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.product_id.hasError('required')">Please select product.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="stock_qty" styleClass="w-100" inputStyleClass="w-100" class="w-100"/>            
+            <label class="mb-2">Quantity<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.stock_qty.invalid && (stockFc.stock_qty.dirty || stockFc.stock_qty.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.stock_qty.hasError('required')">Please select quantity.</small>
+        </div>
+    </div>
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="gross_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3" (onInput)="weightChange($event, 'gross_weight')"/>            
+            <label class="mb-2">Gross Weight<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+        <div *ngIf="stockFc.gross_weight.invalid && (stockFc.gross_weight.dirty || stockFc.gross_weight.touched)" class="text-danger mt-1">
+            <small *ngIf="stockFc.gross_weight.hasError('required')">Please select gross weight.</small>
+        </div>
+    </div>
+    <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="stone_wt" styleClass="w-100" inputStyleClass="w-100" class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3" (onInput)="weightChange($event, 'stone_wt')"/>            
+            <label class="mb-2">Stone Weight<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+    </div> -->
+    <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="enamel_wt" styleClass="w-100" inputStyleClass="w-100" class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3" (onInput)="weightChange($event, 'enamel_wt')"/>            
+            <label class="mb-2">Enamel Weight<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+    </div> -->
+    <!-- <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="hook_wt" styleClass="w-100" inputStyleClass="w-100" class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3" (onInput)="weightChange($event, 'hook_wt')"/>            
+            <label class="mb-2">Hook Weight<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+    </div> -->
+    <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+        <p-floatLabel>
+            <p-inputNumber formControlName="net_weight" styleClass="w-100" inputStyleClass="w-100" class="w-100" [minFractionDigits]="3" [maxFractionDigits]="3"/>            
+            <label class="mb-2">Net Weight<span style="color: #FC6161;"> * </span></label>
+        </p-floatLabel>
+    </div>
+</div>
+
+<div class="text-end" style="position: sticky;bottom: 0;background-color: var(--surface-card);">
+    <p-button label="Cancel" severity="danger" class="me-3"/>
+    <p-button label="Save" (click)="saveStock()"/>
+</div>
+

@@ -1,0 +1,196 @@
+<h4>Welcome, Amogha</h4>
+<p>Monitor your business analytics and statistics</p>
+
+<!-- <div class="mt-3">
+    <p-card>
+        <h5 class="card-title">
+            <h2><i class="pi pi-filter me-2"></i>Filter</h2>
+        </h5>
+
+        <div class="row mb-3 display-flex">
+            <div class="col-12 mb-3">
+                <p-multiSelect styleClass="w-100" [options]="MetalList" (onChange)="GetMetalStockList($event.value)"
+                    [(ngModel)]="selectedMetals" optionLabel="name" optionValue="id" placeholder="Select Metal" />
+            </div>
+        </div>
+    </p-card>
+</div> -->
+
+<div class="mt-3">
+    <p-card>
+        <h5 class="card-title">
+            <h2><i class="pi pi-database me-2"></i>Metal Stock List</h2>
+        </h5>
+        <div class="col-12 row">
+            <div class=" col-12 mb-3 display-flex" *ngFor="let metal of getMetalKeys()">
+
+                <p-card>
+                    <p-table #dt [value]="MetalStockList[metal]" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="false" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+                        [globalFilterFields]="['purity_code','purity','stock_weight','fine_weight']" [tableStyle]="{ 'width': '100%' }" [scrollable]="true">
+                        <ng-template pTemplate="caption">
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                <div class="card-title"><strong>{{metal}} Stock</strong></div>
+                                <!-- <p-badge [value]="metal" severity="success" ngStyle="width: 150px;" /> -->
+                            </span>
+                                <!-- <p-iconField iconPosition="left">
+                                <p-inputIcon>
+                                    <i class="pi pi-search"></i>
+                                </p-inputIcon>
+                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    placeholder="Search" />
+                            </p-iconField> -->
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>
+                                    <strong>{{metal}}</strong>
+                                </th>
+                                <th style="text-align: end;">
+                                    <strong>Stock Weight <br> in gm</strong>
+                                </th>
+                                <th style="text-align: end;">
+                                    <strong>Purity %</strong>
+                                </th>
+                                <th style="text-align: end;">
+                                    <strong>Fine Weight <br> in gm</strong>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item of MetalStockList[metal] let-item *ngFor="let item of MetalStockList[metal]">
+                            <tr>
+                                <td>{{item.purity_code }}</td>
+                                <td style="text-align: end;">{{ item.stock_weight }}</td>
+                                <td style="text-align: end;">{{ item.purity }}</td>
+                                <td style="text-align: end;">{{ item.fine_weight }}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <tr>
+                                <td colspan="2"  style="text-align: center;text-transform: uppercase;"><strong> {{metal}} TOTAL FINE WEIGHT : </strong></td>
+                                <td style="text-align: end;"><Strong>100</Strong></td> 
+                                <td style="text-align: end;">{{FineWeightTotal(metal)}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-card>
+
+            </div>
+        </div>
+    </p-card>
+</div>
+
+<div class="mt-3">
+    <p-card>
+        <h5 class="card-title">
+            <h2><i class="pi pi-database me-2"></i>Last 10 Transaction List</h2>
+        </h5>
+
+        <div class="row mb-3 display-flex">
+
+            <p-card>
+                <p-table #dt [value]="LastTenTranscationList" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="false" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+                    [globalFilterFields]="['stock_entry_type','stock_number','business_from','business_to','metal_name','purity_name','mc_amount']" [tableStyle]="{ 'width': '100%' }" [scrollable]="true">
+                    <ng-template pTemplate="caption">
+                        <div class="d-flex justify-content-between">
+                            <span>
+                                <!-- <div class="card-title"><strong>{{metal}}</strong></div> -->
+                            </span>
+                            <p-iconField iconPosition="left">
+                                <p-inputIcon>
+                                    <i class="pi pi-search"></i>
+                                </p-inputIcon>
+                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
+                            </p-iconField>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>
+                                <strong>Number</strong>
+                            </th>
+                            <th>
+                                <strong>Date & Time</strong>
+                            </th>
+                            <th>
+                                <strong>Business</strong>
+                            </th>
+                            <th>
+                                <strong>Metal</strong>
+                            </th>
+                            <th>
+                                <strong>Purity</strong>
+                            </th>
+                            <th style="text-align: end;">
+                                <strong>Net Wt.gms</strong>
+                            </th>
+                            <th style="text-align: end;">
+                                <strong>Fine Wt.gms</strong>
+                            </th>
+                            <th style="text-align: end;">
+                                <strong>Other Wt.gms</strong>
+                            </th>
+                            <th class="text-end">
+                              <strong>Action </strong>  
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{item.stock_number}}</td>
+                            <td>{{item.stock_entry_date_time}}</td>
+                            <td>{{item.narration}}</td>
+                            <td>{{item.metal_name}}</td>
+                            <td>{{item.purity_name}}</td>
+                            <td style="text-align: end;">{{item.net_weight}}</td>
+                            <td style="text-align: end;">{{item.fine_weight}}</td>
+                            <!-- <td style="text-align: end;">{{item.other_weight}}</td> -->
+                            <td class="text-end" *ngIf="item.other_weight == null">N/A</td>
+                            <td>
+                                <div class="d-flex flex-row align-items-center justify-content-between">
+                                    <div>
+                                        <p-button icon="pi pi-info-circle" [rounded]="true" [text]="true" size="large" (click)="oWOP.toggle($event)" *ngIf="item.mixed_material != null"/>
+                                    </div>
+                                    <div>
+                                        <span class="text-end">{{item.other_weight | number: '1.3-3'}}</span>
+                                        <p-overlayPanel #oWOP styleClass="p-0">
+                                            <ng-template pTemplate="content">
+                                                <table style="border-collapse: collapse;">
+                                                    <tr>
+                                                        <th class="text-start" >Material</th>
+                                                        &nbsp;
+                                                        <th class="text-end" >Weight</th>
+                                                    </tr>
+                                                    <tr *ngFor="let mixed_material_data of item.mixed_material" [style]="isLast ? null : {'border-bottom': '1px solid var(--body-color-op22)'}">
+                                                        <td class="py-3">{{mixed_material_data.name}}</td>
+                                                         &nbsp;
+                                                        <td class="ps-3 py-3 text-end" *ngIf="mixed_material_data.weight > 0">{{mixed_material_data.weight | number: '1.3-3'}} gm</td>
+                                                        <td class="ps-3 py-3 text-end" *ngIf="mixed_material_data.weight == 0">N/A</td>
+                                                    </tr>
+                                                </table>                            
+                                            </ng-template>
+                                        </p-overlayPanel>
+                                    </div>
+                                   
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <p-button icon="pi pi-pencil" [rounded]="true" severity="primary"
+                                    (click)="ListRouting(item.stock_entry_type,item.stock_entry_id)" />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-card>
+
+
+
+
+
+
+
+
+        </div>
+    </p-card>
+</div>

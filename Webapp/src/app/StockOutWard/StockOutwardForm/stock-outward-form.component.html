@@ -1,0 +1,205 @@
+<p-card>
+    <app-sticky-page-header class="mb-4" [title]="outwardInfoId == 0 ?  'New Outward' : 'Edit - '+outwardFC.stock_number.value" defaultHref="/StockOutward" [isCardTitle]="true" (isPinned)="headerPinned = $event">
+        <ng-template mTemplate tempName="buttons">
+            <p-button icon="pi pi-check-circle" label="Submit" [raised]="true" severity="success" (click)="saveOrUpdateOutward()"/>
+            <!-- <p-button icon="pi pi-check-circle" label="Submit" [raised]="true" severity="success" (click)="saveOrUpdateOutward()" [size]="headerPinned ? 'small' : undefined"/> -->
+        </ng-template>
+    </app-sticky-page-header>
+    <div class="row mb-4" [formGroup]="outwardForm">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <input pInputText type="text" class="w-100" formControlName="stock_number" readonly placeholder="AUTO NUMBERED" style="background: var(--tbl-header-bg)"/>
+                <label>Outward No<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>
+                <p-calendar dateFormat="dd-M-yy" formControlName="stock_entry_date_time" placeholder="Select Outward Date" styleClass="w-100"/>
+                <label>out-ward Date<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <div *ngIf="outwardFC.stock_entry_date_time.invalid && (outwardFC.stock_entry_date_time.dirty || outwardFC.stock_entry_date_time.touched)" class="text-danger mt-1">
+                <small *ngIf="inwardFC.stock_entry_date_time.hasError('required')">Please select data and time.</small>
+            </div>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>                
+                <p-dropdown styleClass="w-100" [options]="employeeList" formControlName="received_by_id" optionLabel="name" optionValue="id">
+                    <ng-template let-selectedValue pTemplate="selectedItem">
+                        <div>{{selectedValue.first_name}} {{selectedValue.last_name}}</div>
+                    </ng-template>
+                    <ng-template let-employee pTemplate="item">
+                        <div>{{employee.first_name}} {{employee.last_name}}</div>
+                    </ng-template>
+                </p-dropdown>
+                <label>Received By<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <div *ngIf="outwardFC.received_by_id.invalid && (outwardFC.received_by_id.dirty || outwardFC.received_by_id.touched)" class="text-danger mt-1">
+                <small *ngIf="outwardFC.received_by_id.hasError('required')">Please select received by.</small>
+                <small *ngIf="outwardFC.received_by_id.hasError('sameEmployee')">Received By cannot be same as issued by</small>
+            </div>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>                
+                <p-dropdown styleClass="w-100" [options]="employeeList" formControlName="hand_over_id" optionValue="id">
+                    <ng-template let-selectedValue pTemplate="selectedItem">
+                        <div>{{selectedValue.first_name}} {{selectedValue.last_name}}</div>
+                    </ng-template>
+                    <ng-template let-employee pTemplate="item">
+                        <div>{{employee.first_name}} {{employee.last_name}}</div>
+                    </ng-template>
+                </p-dropdown>
+                <label>Hand over By<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <div *ngIf="outwardFC.hand_over_id.invalid && (outwardFC.hand_over_id.dirty || outwardFC.hand_over_id.touched)" class="text-danger mt-1">
+                <small *ngIf="outwardFC.hand_over_id.hasError('required')">Please select issued by.</small>
+                <small *ngIf="outwardFC.hand_over_id.hasError('sameEmployee')">Hand over By cannot be same as Received by.</small>
+            </div>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>                
+                <p-dropdown styleClass="w-100" [options]="metalList" formControlName="metal_id" optionValue="id" optionLabel="name" (onChange)="metalChange($event)"></p-dropdown>
+                <label>Metal<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <div *ngIf="outwardFC.metal_id.invalid && (outwardFC.metal_id.dirty || outwardFC.metal_id.touched)" class="text-danger mt-1">
+                <small *ngIf="outwardFC.metal_id.hasError('required')">Please select metal.</small>                
+            </div>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-4">
+            <p-floatLabel>                
+                <p-dropdown styleClass="w-100" [options]="purityListByMetal" formControlName="purity_id" optionValue="id" optionLabel="name"></p-dropdown>
+                <label>Purity<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <div *ngIf="outwardFC.purity_id.invalid && (outwardFC.purity_id.dirty || outwardFC.purity_id.touched)" class="text-danger mt-1">
+                <small *ngIf="outwardFC.purity_id.hasError('required')">Please select purity.</small>                
+            </div>
+        </div>
+
+        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+            <p-floatLabel>
+                <textarea pInputTextarea class="w-100" formControlName="note"></textarea>
+                <!-- <input pInputText type="text" class="w-100" formControlName="note"/> -->
+                <label>Note<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+        </div>
+    </div>
+    <!-- <div class="col-12 text-end mb-4">
+        <p-button icon="pi pi-check-circle" label="Submit" [raised]="true" severity="success" (click)="InsertOutwardInfo()"/>
+    </div> -->
+
+    <p-table [responsive]="true" [globalFilterFields]="['']" [value]="outwardProductList" [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [scrollable]="true"
+        *ngIf="this.outwardInfoId != 0">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Item</th>                
+                <th>Quantity</th>
+                <th class="text-end">Gross Wt.gms</th>
+                <th class="text-end">Other Wt.gms</th>
+                <th class="text-end">Nett Wt.gms</th>                                
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr [style]="product.history ? {'background-color': 'rgb(255 180 0 / 0.08)'} : null">
+                <td>
+                    <table class="w-100">
+                        <tr>
+                            <th class="py-2 ps-0">Product</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{product.product_name}}</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2 ps-0">Model</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{product.product_code}}</td>
+                        </tr>
+                        <tr *ngIf="product.combination">
+                            <th class="py-2 ps-0">Variant</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{product.combination}}</td>
+                        </tr>                         
+                        <tr>
+                            <th class="py-2 ps-0">Unit</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{product.unit_name}}</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2 ps-0">Gross Wt</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{(product.gross_weight/product.stock_qty).toFixed(3)}}/item</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2 ps-0">Other Wt</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{(product.other_weight/product.stock_qty).toFixed(3)}}/item</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2 ps-0">Nett Wt</th>
+                            <th class="px-2 py-2"> : </th>
+                            <td class="py-2 pe-0">{{(product.net_weight/product.stock_qty).toFixed(3)}}/item</td>
+                        </tr>              
+                    </table>
+                </td>
+                <!-- <td>{{product.combination}}</td> -->
+                <!-- <td>{{product.purity_name}}</td> -->
+                <td class="text-end">{{product.stock_qty * -1}}</td>
+                <td class="text-end">{{product.gross_weight | number: '1.3-3'}}</td>
+                <td class="text-end">
+                    <div class="d-flex flex-row align-items-center justify-content-end">
+                        <span>{{product.other_weight | number: '1.3-3'}}</span>
+                        <p-button icon="pi pi-info-circle" [rounded]="true" [text]="true" size="large" (click)="oWOP.toggle($event)" *ngIf="parseString(product.mixed_material).length"/>
+                        <p-overlayPanel #oWOP styleClass="p-0">
+                            <ng-template pTemplate="content">
+                                <table style="border-collapse: collapse;">
+                                    <tr *ngFor="let mixedMaterial of parseString(product.mixed_material);last as isLast" [style]="isLast ? null : {'border-bottom': '1px solid var(--body-color-op22)'}">
+                                        <td class="fw-semibold py-3">{{mixedMaterial.name}}</td>
+                                        <td class="fw-semibold px-2 py-3"> : </td>
+                                        <td class="ps-3 py-3">{{mixedMaterial.weight | number: '1.3-3'}}</td>
+                                    </tr>
+                                </table>                            
+                            </ng-template>
+                        </p-overlayPanel>
+                    </div>
+                    
+                </td>
+                <td class="text-end">{{product.net_weight | number: '1.3-3'}}</td>               
+                <td class="text-nowrap text-end">
+                    <p-button icon="pi pi-pencil" [rounded]="true" severity="primary" size="small" (click)="openOutwardProductForm(true, product)"/>
+                    <p-button icon="pi pi-trash" [rounded]="true" severity="danger" size="small" class="ms-3" (click)="deleteConfirmation(product)"/>
+                    <p-button *ngIf="product.history" icon="pi pi-file" [rounded]="true" severity="warning" size="small" class="ms-3" (click)="nOP.toggle($event)"/>
+                    <p-overlayPanel #nOP styleClass="p-0" >
+                        <h5>Notes</h5>
+                        <div class="" *ngFor="let notes of parseString(product.history);last as isLast" [style]="isLast ? null : {'border-bottom': '1px solid var(--body-color-op22)'}">
+                            <div class="mb-3">{{notes.notes}}</div>
+                            <small class="p-text-secondary">Modified Date</small>
+                            <div class="mb-3">{{notes.modified_date | date:'dd MMM y, h:mm:ss a'}}</div>
+                            <small class="p-text-secondary">Modified By</small>
+                            <div>{{notes.name}}</div>
+                        </div>
+                    </p-overlayPanel>
+                </td>            
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">            
+            <tr>
+                <td colspan="6" class="text-center">
+                    <p-button icon="pi pi-plus" label="Add" [raised]="true" (click)="openOutwardProductForm(false)"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">Total</td>
+                <td class="text-end">{{stockProductTotalWeightDetail?.qty}}</td>
+                <td class="text-end">{{stockProductTotalWeightDetail?.grossWt | number: '1.3-3'}}</td>
+                <td class="text-end">{{stockProductTotalWeightDetail?.otherWt | number: '1.3-3'}}</td>
+                <td class="text-end">{{stockProductTotalWeightDetail?.netWt | number: '1.3-3'}}</td>
+                <td></td>               
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>
+
+<p-confirmDialog />

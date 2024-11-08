@@ -1,0 +1,12 @@
+<div class="d-flex flex-row align-items-center justify-content-between gap-3">
+  <div class="d-flex flex-row align-items-center flex-grow-1">
+    <p-button icon="pi pi-arrow-left" [plain]="true" size="small" [text]="true" [link]="true" class="back-button" *ngIf="showBackButton && (hasHistory || defaultHref)" (click)="navigateBack()"/>
+    <div class="title fw-semibold flex-grow-1" [ngClass]="{'ms-3': !showBackButton && (!hasHistory || !defaultHref) && _isPinned}">{{title}}</div>
+  </div>
+  <div class="flex-shrink-0">
+    <ng-container *ngTemplateOutlet="inputTemplate;"></ng-container>
+  </div>
+  <div class="flex-shrink-0" [ngClass]="{'me-3': _isPinned}">
+    <ng-container *ngTemplateOutlet="actionButtonsTemplate;"></ng-container>
+  </div>
+</div>

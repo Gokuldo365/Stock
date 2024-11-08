@@ -1,0 +1,55 @@
+<p-card class="mt-5">
+    <app-sticky-page-header title="Attribute List" [isCardTitle]="true" [showBackButton]="false" (isPinned)="headerPinned = $event" class="mb-3">
+
+    </app-sticky-page-header>
+
+    <p-table [responsive]="true" #dt [globalFilterFields]="['name','display_order']" [value]="AttributeList" [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+        [scrollable]="true">
+
+        <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between">
+                <p-button icon="pi pi-plus" label="Add New" [raised]="true" severity="primary" (click)="AddOrEditAttribute(0,'false')" />
+                <p-iconField iconPosition="left">
+                    <p-inputIcon>
+                        <i class="pi pi-search"></i>
+                    </p-inputIcon>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
+                </p-iconField>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name">
+                    Name
+                    <p-sortIcon field="name" />
+                </th>
+                <th>
+                    Detail
+                </th>
+                <th pSortableColumn="display_order">
+                    Display Order
+                    <p-sortIcon field="display_order" />
+                </th>
+                <th class="text-end">
+                    Action
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.name}}</td>
+                <td>{{item.detail}}</td>
+                <td>{{item.display_order}}</td>
+                <td class="text-end">
+                    <p-button icon="pi pi-pencil" [rounded]="true" severity="primary" (click)="AddOrEditAttribute(item.id,item.is_used)" />&nbsp;
+                    <p-button icon="pi pi-trash" [rounded]="true" severity="danger" (click)="Delete(item.id,item.name)" *ngIf="item.is_used == 'false'"/>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</p-card>
+<p-confirmDialog header="Confirmation" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

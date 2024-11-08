@@ -1,0 +1,223 @@
+<app-sticky-page-header class="mb-4" [title]="'Business Ledger'" [isCardTitle]="false"></app-sticky-page-header>
+
+<p-card header="Filter">
+    <div class="row mt-3" [formGroup]="FilterForm">
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown 
+                    styleClass="w-100" 
+                    formControlName="business_category" 
+                    [filter]="true" 
+                    appendTo="body" 
+                    [options]="BusinessCategoryDropdown" 
+                    optionLabel="name" 
+                    optionValue="id" 
+                    (onChange)="GetBusinessList($event.value)" 
+                    placeholder="Select Business Category"
+                ></p-dropdown>
+                <label>Business Category<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation 
+                propertyName="business_category" 
+                [MessageArray]="FilterValidationMessage" 
+                [FormGroupName]="FilterForm">
+            </app-validation>
+        </div>
+        
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown 
+                    styleClass="w-100" 
+                    formControlName="business_id" 
+                    [options]="BusinessDropdown" 
+                    [(ngModel)]="SearchData.business_id" 
+                    optionLabel="business_name" 
+                    optionValue="id" 
+                    placeholder="Select Business"
+                ></p-dropdown>
+                <label>Business<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation 
+                propertyName="business_id" 
+                [MessageArray]="FilterValidationMessage" 
+                [FormGroupName]="FilterForm">
+            </app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="metal_id" [options]="MetalList" (onChange)="GetPurityList($event.value)" [(ngModel)]="SearchData.metal_id" optionLabel="name" optionValue="id" placeholder="Select Metal" [showClear]="true"/>
+                <label>Metal<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation 
+                propertyName="metal_id" 
+                [MessageArray]="FilterValidationMessage" 
+                [FormGroupName]="FilterForm">
+            </app-validation>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+            <p-floatLabel>
+                <p-dropdown styleClass="w-100" [filter]="true" appendTo="body" formControlName="purity_id" [options]="PurityList"[(ngModel)]="SearchData.purity_id" optionLabel="name" optionValue="id" placeholder="Select Purity" [showClear]="true"  (onChange)="GetBusinessLedgerList('PT')"/>
+                <label>Purity</label>
+            </p-floatLabel>
+            <app-validation 
+                propertyName="purity_id" 
+                [MessageArray]="FilterValidationMessage" 
+                [FormGroupName]="FilterForm">
+            </app-validation>
+        </div>
+
+    </div>
+    <!-- <div class="row mt-2 text-end">
+        <p-button icon="pi pi-search" label="Search" [raised]="true" severity="secondary" (click)="GetBusinessLedgerList()"/>
+    </div> -->
+
+</p-card>
+
+<div class="mt-3" *ngIf="BusinessLedgerList?.length > 0">
+    <p-card>
+        <p-table #dt [value]="BusinessLedgerList" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="false" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0" 
+            [globalFilterFields]="['stock_entry_date_time','stock_number','product_name','stock_qty','unit_name','stock_in','stock_out','stock_weight_balance','amount_in','amount_out','stock_amount_balance','amount_in','amount_out','stock_amount_balance']" [tableStyle]="{ 'width': '100%','height': 'auto' }" [scrollable]="true" scrollHeight="450px" [style]="{ 'width': '100%', 'margin': '0 auto' }">
+            <ng-template pTemplate="caption">
+               <div class="d-flex justify-content-between">
+                <div>
+                    <p-button label="Download" class="mx-3" icon="pi pi-download" (click)="DownloadExcel()" />
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between">
+                        <span></span>
+                        <p-iconField iconPosition="left">
+                            <p-inputIcon>
+                                <i class="pi pi-search"></i>
+                            </p-inputIcon>
+                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search" />
+                        </p-iconField>
+                    </div>
+                </div>
+               </div>
+            </ng-template>
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width:270px" *ngIf="scrWidth < 992">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:250px">
+                    <col style="width:350px">
+                    <col style="width:350px">
+                    <col style="width:350px">
+                    <col style="width:350px">
+                    <col style="width:350px">
+                    <col style="width:350px">
+                    <col style="width:270px;max-width:270px;" *ngIf="scrWidth > 992">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="text-align: center;">
+                        Date
+                    </th>
+                    <th style="text-align: center;">
+                        Number
+                    </th>
+                    <th style="text-align: center;">
+                        UOM
+                    </th>
+                    <th style="text-align: end;">
+                        Qty In
+                    </th>
+                    <th style="text-align: end;">
+                        Qty Out
+                    </th>
+                    <th style="text-align: end;">
+                        Qty Balance
+                    </th>
+                    <th style="text-align: end;">
+                        Stock In
+                    </th>
+                    <th style="text-align: center;">
+                        Stock Out
+                    </th>
+                    <th style="text-align: end;">
+                        Stock Balance
+                    </th>
+                    <th style="text-align: end;">
+                        Fine Weight In
+                    </th>
+                    <th style="text-align: end;">
+                        Fine Weight Out
+                    </th>
+                    <th style="text-align: end;">
+                        Fine Weight Balance
+                    </th>
+                    <th style="text-align: end;">
+                        Amount In
+                    </th>
+                    <th style="text-align: end;">
+                        Amount Out
+                    </th>
+                    <th style="text-align: end;">
+                        Amount Balance
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td style="text-align: center;min-width: 125px;">{{item.stock_entry_date_time | date:"dd-MMM-yyyy"}}</td>
+                    <td style="text-align: center;">{{item.stock_number}}</td>
+                    <td style="text-align: center;">{{item.unit_name}}</td>
+                    <td style="text-align: end;" *ngIf="item.qty_in != 0">{{item.qty_in}}</td>
+                    <td style="text-align: end;" *ngIf="item.qty_in == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.qty_out != 0">{{item.qty_out}}</td>
+                    <td style="text-align: end;" *ngIf="item.qty_out == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.qty_balance != 0">{{item.qty_balance}}</td>
+                    <td style="text-align: end;" *ngIf="item.qty_balance == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.stock_in != 0">{{item.stock_in | number: '1.3-3'}}</td>
+                    <td style="text-align: end;" *ngIf="item.stock_in == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.stock_out != 0">{{item.stock_out | number: '1.3-3'}}</td>
+                    <td style="text-align: end;" *ngIf="item.stock_out == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.stock_balance != 0">{{item.stock_balance | number: '1.3-3'}}</td>
+                    <td style="text-align: end;" *ngIf="item.stock_balance == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.fine_weight_in != 0">{{item.fine_weight_in | number: '1.3-3'}}</td>
+                    <td style="text-align: end;" *ngIf="item.fine_weight_in == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.fine_weight_out != 0">{{item.fine_weight_out | number: '1.3-3'}}</td>
+                    <td style="text-align: end;" *ngIf="item.fine_weight_out == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.fine_weight_balance != 0">{{item.fine_weight_balance | number: '1.3-3'}}</td>
+                    <td style="text-align: end;" *ngIf="item.fine_weight_balance == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.amount_in != 0">{{CurrencySymbol}}&nbsp;{{item.amount_in | number: '1.2-2'}}</td>
+                    <td style="text-align: end;" *ngIf="item.amount_in == 0"></td>
+                    <td style="text-align: end;" *ngIf="item.amount_out != 0">{{CurrencySymbol}}&nbsp;{{item.amount_out | number: '1.2-2'}}</td>
+                    <td style="text-align: end;" *ngIf="item.amount_out == 0"></td>
+                    <td style="text-align: end; min-width:180px" *ngIf="item.amount_balance != 0">{{CurrencySymbol}}&nbsp;{{item.amount_balance | number: '1.2-2'}}</td>
+                    <td style="text-align: end; min-width:180px" *ngIf="item.amount_balance == 0"></td>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer" style="position: sticky;">
+
+                <tr>
+                    <td colspan="3" class="fw-bold fs-4" style="text-align: center;">TOTAL</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateQualityIn()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateQualityOut()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateQtyBalance()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateStockIn()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateStockOut()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateStockBalance()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateFineWtyIn()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateFineWtyOut()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CalculateFineWtyBalance()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CurrencySymbol}}&nbsp;{{CalculateAmountIn()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CurrencySymbol}}&nbsp;{{CalculateAmountOut()}}</td>
+                    <td class="fw-bold" style="text-align: end;">{{CurrencySymbol}}&nbsp;{{CalculateAmountBalance()}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>

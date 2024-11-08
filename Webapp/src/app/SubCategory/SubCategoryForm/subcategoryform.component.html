@@ -1,0 +1,58 @@
+<app-sticky-page-header class="mb-4" [title]="SubCategoryId == 0 ?  'New SubCategory' : 'Edit - '+ SubCategoryData.name" defaultHref="/SubCategory"
+    [isCardTitle]="false"></app-sticky-page-header>
+<p-card header="SubCategory">
+    <div class="row" [formGroup]="SubCategoryForm">
+
+        <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <p-dropdown [options]="CategoryList" optionLabel="name" optionValue="id"
+                    formControlName="category_id" [(ngModel)]="SubCategoryData.category_id"
+                    placeholder="Select Category" styleClass="w-100" />
+                <label class="mb-2">Category<span style="color: #FC6161;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="category_id" [MessageArray]="SubCategoryValidationMessage"
+                [FormGroupName]="SubCategoryForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <input type="text" pInputText class="w-100" formControlName="name" [(ngModel)]="SubCategoryData.name" />
+                <label>Name<span style="color: red;"> * </span></label>
+            </p-floatLabel>
+            <app-validation propertyName="name" [MessageArray]="SubCategoryValidationMessage"
+                [FormGroupName]="SubCategoryForm"></app-validation>
+        </div>
+
+        <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 my-3">
+            <p-floatLabel>
+                <input type="text" pInputText class="w-100" numeric formControlName="display_order" [(ngModel)]="SubCategoryData.display_order" />
+                <label>Display Order</label>
+            </p-floatLabel>
+            <app-validation propertyName="display_order" [MessageArray]="SubCategoryValidationMessage"
+                [FormGroupName]="SubCategoryForm"></app-validation>
+        </div>
+
+        
+
+        <div class="col-12 mb-4">
+            <p-floatLabel>
+                <textarea rows="2" pInputTextarea class="w-100" formControlName="description" [(ngModel)]="SubCategoryData.description"></textarea>
+                <label for="float-input">Description<span style="color: #FC6161;"> *</span></label>
+            </p-floatLabel>
+            <app-validation propertyName="description" [MessageArray]="SubCategoryValidationMessage"
+            [FormGroupName]="SubCategoryForm"></app-validation>
+        </div>
+
+
+        <div class="col-12 text-end mb-3">
+            <p-button icon="pi pi-times" [label]="SubCategoryId == 0 ? 'Clear' : 'Cancel'" class="me-3" [raised]="true"
+                severity="danger" (click)="Cancel()" />
+            <button pButton pRipple icon="pi pi-check-circle" class="me-3" [label]="SubCategoryId == 0 ? 'Save' : 'Update'"
+                class="p-button-success" (click)="SubCategorySaveOrUpdate()"></button>
+        </div>
+    </div>
+</p-card>
+
+
+<p-confirmDialog header="Confirmation" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

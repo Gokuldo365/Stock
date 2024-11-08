@@ -1,0 +1,98 @@
+<app-sticky-page-header class="mb-4" [title]="'Stock Report'"
+    [isCardTitle]="false"></app-sticky-page-header>
+
+    <p-card header="Filter">
+        <div class="row mt-3">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+                <p-floatLabel>
+                    <p-dropdown styleClass="w-100" [options]="MetalDropdown" (onChange)="GetPurityList($event.value)" [(ngModel)]="SearchData.metal_id" optionLabel="name" optionValue="id" placeholder="Select Metal" />
+                    <label>Metal</label>
+                </p-floatLabel>
+            </div>
+
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+                <p-floatLabel>
+                    <p-dropdown styleClass="w-100" [options]="PurityDropdown" [(ngModel)]="SearchData.purity_id" optionLabel="name" optionValue="id" placeholder="Select Purity" />
+                    <label>Purity</label>
+                </p-floatLabel>
+            </div>
+
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+                <p-floatLabel>
+                    <p-dropdown styleClass="w-100" [options]="CategoryDropdown" [(ngModel)]="SearchData.category_id" optionLabel="name" optionValue="id" placeholder="Select Category" />
+                    <label>Category</label>
+                </p-floatLabel>
+            </div>
+
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-3">
+                <p-floatLabel>
+                    <input type="text" pInputText class="w-100" [(ngModel)]="SearchData.item_name_code" placeholder="Enter Product / Code"/>
+                    <label>Product / Code</label>
+                </p-floatLabel>
+            </div>
+        </div>
+        <div class="col-12 text-end mt-2">
+            <p-button label="Filter" icon="pi pi-filter" (click)="GetStockReportList()" />
+        </div>
+</p-card>
+
+<div class="mt-3" *ngIf="StockReportList?.length > 0">
+<p-card header="Report List">
+
+    
+    <p-table #dt [value]="StockReportList" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true"
+            [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+            [globalFilterFields]="['metal_name','item','model','purity_name']" [tableStyle]="{ 'width': '100%' }" [scrollable]="true">
+            <ng-template pTemplate="caption">
+                <div class="d-flex justify-content-between">
+                    <span></span>
+                    <p-iconField iconPosition="left">
+                        <p-inputIcon>
+                            <i class="pi pi-search"></i>
+                        </p-inputIcon>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            placeholder="Search" />
+                    </p-iconField>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>
+                        Metal
+                    </th>
+                    <th>
+                        Purity
+                    </th>
+                    <th>
+                        Item
+                    </th>
+                    <th>
+                        Model
+                    </th>
+                    <th>
+                        Variant
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Unit
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.metal_name}}</td>
+                    <td>{{item.purity_name}}</td>
+                    <td>{{item.item}}</td>
+                    <td>{{item.model}}</td>
+                    <td *ngIf="item.variants != null">{{item.variants}}</td>
+                    <td *ngIf="item.variants == null">N/A</td>
+                    <td>{{item.total_quantity}}</td>
+                    <td>{{item.unit}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
